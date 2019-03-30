@@ -1,0 +1,13 @@
+//lib version
+buildscript {
+    ext {
+        //android
+        _compileSdkVersion = 28
+        _targetSdkVersion = 28
+        _supportVersion = '28.0.0'
+        _minSdkVersion = 16
+        _versionCode = System.getenv("BUILD_NUMBER") as Integer ?: 1
+        lifecycle_extensions = '1.1.1'
+        mpchart = 'v3.0.3'
+    }
+}

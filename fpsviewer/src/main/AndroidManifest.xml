@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.silencedut.fpsviewer">
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <application
+    >
+        <activity
+                android:name=".fps.FpsAnalyzeActivity"
+                android:launchMode="singleTask">
+        </activity>
+    </application>
+</manifest>

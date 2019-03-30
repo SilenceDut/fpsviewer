@@ -1,0 +1,53 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.silencedut'
+
+android {
+    compileSdkVersion _compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion _minSdkVersion
+        targetSdkVersion _targetSdkVersion
+        versionCode _versionCode
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // 指定编码
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+    // 打包源码
+    task sourcesJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier = 'sources'
+    }
+
+    artifacts {
+        archives sourcesJar
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    compileOnly "com.android.support:appcompat-v7:$_supportVersion"
+    compileOnly "android.arch.lifecycle:extensions:$lifecycle_extensions"
+    implementation "com.github.PhilJay:MPAndroidChart:$mpchart"
+
+
+}
+repositories {
+    mavenCentral()
+}

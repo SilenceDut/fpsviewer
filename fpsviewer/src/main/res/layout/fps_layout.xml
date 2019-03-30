@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+    <TextView
+        android:id="@+id/fps_tv"
+        android:layout_width="@dimen/fps_size"
+        android:layout_height="@dimen/fps_size"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:background="@drawable/fps_a_bg"
+        android:text="@string/go"
+
+    />
+
+    <TextView
+        android:id="@+id/analyze"
+        android:layout_width="@dimen/fps_size"
+        android:layout_height="@dimen/fps_size"
+        android:layout_marginLeft="45dp"
+        android:background="@mipmap/analyze"
+        android:visibility="gone"
+    />
+
+
+</FrameLayout>
