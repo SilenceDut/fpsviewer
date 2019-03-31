@@ -22,7 +22,7 @@
         android:layout_height="@dimen/fps_size"
         android:layout_marginLeft="45dp"
         android:background="@mipmap/analyze"
-        android:visibility="gone"
+        android:visibility="visible"
     />
 
 

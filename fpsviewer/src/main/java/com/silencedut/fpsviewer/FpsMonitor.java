@@ -15,7 +15,7 @@ import static com.silencedut.fpsviewer.FpsConstants.FRAME_INTERVAL_NANOS;
  * @author SilenceDut
  * @date 2019/3/18
  */
-public class FpsMonitor {
+class FpsMonitor {
     private static final String TAG_SUFFIX = "FpsMonitor";
 
     private long mLastFrameTimeNanos;
@@ -45,11 +45,13 @@ public class FpsMonitor {
     };
 
 
-    public void recordFps(boolean start) {
+    void recordFps(boolean start) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            for(FrameListener frameListener : mFrameListeners) {
+                frameListener.onRecord(start);
+            }
             if(start) {
                 mLastFrameTimeNanos = 0;
-
                 Choreographer.getInstance().postFrameCallback(frameCallback);
             } else {
                 Choreographer.getInstance().removeFrameCallback(frameCallback);
@@ -63,6 +65,7 @@ public class FpsMonitor {
 
     public interface FrameListener {
         void onFrame(byte fps, int skipped, long frameCostMillis);
+        void onRecord(boolean recording);
     }
 
 

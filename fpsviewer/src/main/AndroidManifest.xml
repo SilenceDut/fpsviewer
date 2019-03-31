@@ -4,7 +4,7 @@
     <application
     >
         <activity
-                android:name=".fps.FpsAnalyzeActivity"
+                android:name=".analyze.FpsAnalyzeActivity"
                 android:launchMode="singleTask">
         </activity>
     </application>

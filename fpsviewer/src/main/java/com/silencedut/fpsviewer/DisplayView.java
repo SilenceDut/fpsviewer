@@ -19,6 +19,12 @@ import com.silencedut.fpsviewer.analyze.FpsAnalyzeActivity;
  */
 public class DisplayView implements View.OnClickListener ,View.OnTouchListener{
 
+    enum STATE {
+        /**
+         * 浮窗View状态
+         */
+        INITIAL, UPDATE,STOP,ANALYZE
+    }
     private static final String TAG = "FpsViewer";
     private static final int MOVE_ERROR = 20;
     private static final int FPS_A = 50;
@@ -31,7 +37,6 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener{
     private TextView mFpsTv;
     private TextView mAnalyze;
 
-    private Context mApplicationContext;
     private WindowManager windowManager ;
     private WindowManager.LayoutParams layoutParams;
 
@@ -40,23 +45,25 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener{
 
     private float mTouchStartX;
     private float mTouchStartY;
-    private boolean started = false;
+
     private Drawable mDGradeDrawable;
     private Drawable mAGradeDrawable;
+
+    private STATE mState = STATE.INITIAL;
+    private boolean mBufferFull;
 
     /**
      * default about 10 minute(60*10)
      */
-    private int[] fpsBuffer = new int[36000];
-    private int totalBufferIndex;
-    private volatile boolean inSample;
-    private int sampleCount;
+    private int[] mFpsBuffer = new int[36000];
+    private int mTotalBufferIndex;
 
-    public static DisplayView show(final Context context ) {
+
+    static DisplayView create(final Context context ) {
         return new DisplayView(context);
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint({"InflateParams", "ClickableViewAccessibility"})
     private DisplayView(final Context context) {
         try {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -72,7 +79,6 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener{
             Log.e(TAG,"open fps view fail",e);
         }
 
-        mApplicationContext = context;
         LayoutInflater mLayoutInflater = LayoutInflater.from(context);
         mRootView = mLayoutInflater.inflate(R.layout.fps_layout, null);
         mFpsTv  = mRootView.findViewById(R.id.fps_tv);
@@ -99,14 +105,21 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener{
         layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
-        mRootView.setOnClickListener(this);
-        mRootView.setOnTouchListener(this);
+        mFpsTv.setOnClickListener(this);
+        mFpsTv.setOnTouchListener(this);
+        mAnalyze.setOnClickListener(this);
+        mAnalyze.setOnTouchListener(this);
 
-        FpsViewer.getFpsMonitor().addFrameListener(new FpsMonitor.FrameListener() {
+
+    }
+
+    DisplayView prepare() {
+        FpsViewer.fpsMonitor().addFrameListener(new FpsMonitor.FrameListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onFrame(byte fps, int skipped, long frameCostMillis) {
-                if(started) {
-                    mFpsTv.setText(context.getString(R.string.fps,fps));
+                if(mState == STATE.UPDATE) {
+                    mFpsTv.setText(fps+"");
                     if(fps < FPS_D) {
                         mFpsTv.setBackground(mDGradeDrawable);
                     } else {
@@ -115,73 +128,95 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener{
                     recordFrame(fps,skipped);
                 }
             }
+
+            @Override
+            public void onRecord(boolean recording) {
+                if(recording) {
+                    windowManager.addView(mRootView, layoutParams);
+                }else {
+                    windowManager.removeView(mRootView);
+                }
+            }
         });
-        windowManager.addView(mRootView, layoutParams);
+        initial();
+        return this;
     }
 
-    public void syncSample() {
-        if( inSample ) {
-            return;
-        }
-        inSample = true;
-        sampleCount = 0;
+    private void startUpdate() {
+        mTotalBufferIndex = 0;
+        mBufferFull = false;
+        mFpsTv.setVisibility(View.VISIBLE);
+        mAnalyze.setVisibility(View.GONE);
+
     }
 
-    private void waitForNextSample() {
-        Sentry.sentryScheduler().sendMessage(SentryScheduler.SAMPLE_PERIOD,Sentry.sentryConfig().fpsSamplePeriod());
+    private void stopUpdate() {
+        mAnalyze.setVisibility(View.VISIBLE);
+        mFpsTv.setText(R.string.go);
     }
+
+    private void dismiss() {
+        mFpsTv.setVisibility(View.GONE);
+        mAnalyze.setVisibility(View.GONE);
+    }
+
+    public void initial() {
+        mState = STATE.INITIAL;
+        mFpsTv.setVisibility(View.VISIBLE);
+        mAnalyze.setVisibility(View.GONE);
+        mFpsTv.setText(R.string.go);
+    }
+
 
 
     private void recordFrame(byte fps,int skipped) {
 
-        if(inSample) {
-
-            int combine = fps << 26 ;
-            combine = skipped | combine;
-            if(totalBufferIndex <= fpsBuffer.length) {
-                fpsBuffer[totalBufferIndex] = combine;
-            } else {
-                toggle();
-            }
-            totalBufferIndex++;
-            if(sampleCount < Sentry.sentryConfig().fpsSampleFrameCount()-1) {
-                sampleCount ++ ;
-            }else {
-                inSample = false;
-                waitForNextSample();
-            }
+        int combine = fps << 26 ;
+        combine = skipped | combine;
+        if(mTotalBufferIndex < mFpsBuffer.length) {
+            mFpsBuffer[mTotalBufferIndex] = combine;
+        } else {
+            mTotalBufferIndex = -1;
+            mBufferFull = true;
         }
+        mTotalBufferIndex++;
+
 
     }
 
     @Override
     public void onClick(View v) {
-        toggle();
-    }
+        FpsLog.info("onClick:"+(v.getId() == R.id.fps_tv)+";"+(v.getId() == R.id.analyze));
 
-    private void toggle() {
-        started = !started;
-        if(!started) {
-            mFpsTv.setText(R.string.go);
-            Intent intent = new Intent(mApplicationContext,FpsAnalyzeActivity.class);
+        if(v.getId() == R.id.fps_tv) {
+            if(mState.ordinal() < STATE.ANALYZE.ordinal()) {
 
-            int[] copyBuffer  = new int[totalBufferIndex];
-            System.arraycopy(fpsBuffer,0,copyBuffer,0,copyBuffer.length);
+                if(mState == STATE.STOP || mState == STATE.INITIAL) {
+                    startUpdate();
+                    mState = STATE.UPDATE;
+                }else if(mState == STATE.UPDATE) {
+                    stopUpdate();
+                    mState = STATE.STOP;
+                }
+            }
+        }else if(v.getId() == R.id.analyze) {
+            mState = STATE.ANALYZE;
+            dismiss();
+            Intent intent = new Intent(mFpsTv.getContext(),FpsAnalyzeActivity.class);
+
+            int[] copyBuffer  = new int[mTotalBufferIndex];
+            System.arraycopy(mFpsBuffer,0,copyBuffer,0,copyBuffer.length);
             Log.i(TAG,"buffer length "+copyBuffer.length);
             intent.putExtra(FpsAnalyzeActivity.FPS_BUFFER,copyBuffer);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mApplicationContext.startActivity(intent);
-        } else {
-            totalBufferIndex = 0;
-            waitForNextSample();
+            mFpsTv.getContext().startActivity(intent);
         }
-
-        mAnalyze.setVisibility(started?View.GONE:View.VISIBLE);
-
     }
+
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
 
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
@@ -203,8 +238,9 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener{
             case MotionEvent.ACTION_UP:
                 if (Math.abs(layoutParams.x - startPositionX) < MOVE_ERROR && Math.abs(layoutParams.y
                         - startPositionY) < MOVE_ERROR) {
-                    v.performClick();
 
+                    FpsLog.info("isFpsView:"+(v.getId() == R.id.fps_tv)+";"+(v.getId() == R.id.analyze));
+                    v.performClick();
                     return true;
                 }
                 break;
@@ -212,4 +248,6 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener{
         }
         return false;
     }
+
 }
+

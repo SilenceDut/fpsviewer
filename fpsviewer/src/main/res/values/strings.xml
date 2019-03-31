@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">smoothsentry</string>
     <string name="go">GO</string>
-    <string name="fps">%d</string>
 </resources>

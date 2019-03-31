@@ -11,12 +11,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class FpsConfig {
 
+    public static FpsConfig defaultConfig(){
+        return new Builder().build();
+    }
 
 
     private boolean fpsViewEnable ;
     private boolean enableOutputFpsData ;
     /**
-     * 采样周期
+     * 采样周期,毫秒
      */
     private int fpsSampleMillSeconds ;
     /**

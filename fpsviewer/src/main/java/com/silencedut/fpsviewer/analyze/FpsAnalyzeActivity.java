@@ -5,10 +5,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.silencedut.fpsviewer.FpsViewer;
 import com.silencedut.fpsviewer.R;
 
 import java.util.ArrayList;
@@ -47,14 +49,15 @@ public class FpsAnalyzeActivity extends AppCompatActivity {
 
         int[] fpsBuffer = intent.getIntArrayExtra(FPS_BUFFER);
 
-        SentryHelper.info(TAG,"buffer length "+fpsBuffer.length);
+
+        Log.i(TAG,"buffer length "+fpsBuffer.length);
 
 
         List<Entry> fpsEntries = new ArrayList<>();
         List<Entry> skippedFrameEntries = new ArrayList<>();
 
-        int count = Sentry.sentryConfig().fpsSampleFrameCount();
-        int sampleSeconds = Sentry.sentryConfig().fpsSamplePeriod();
+        int count = FpsViewer.fpsConfig().getFpsSampleFrameCount();
+        int sampleSeconds = FpsViewer.fpsConfig().getFpsSampleMillSeconds();
         int tempFps=0;
         int tempSkips=0;
         for (int index =0 ; index < fpsBuffer.length ; index++) {
@@ -62,7 +65,7 @@ public class FpsAnalyzeActivity extends AppCompatActivity {
             int fps = fpsBuffer[index] >>> 26  ;
             int skipped = fpsBuffer[index] & 0x3FFFFFF ;
 
-            SentryHelper.info(TAG,"fps "+fps + "skipped "+skipped);
+            Log.i(TAG,"fps "+fps + "skipped "+skipped);
 
             fpsEntries.add(new Entry(index , fps));
             skippedFrameEntries.add(new Entry(index , skipped));
@@ -101,5 +104,11 @@ public class FpsAnalyzeActivity extends AppCompatActivity {
             mKippedChart.setData(lineData);
             mKippedChart.invalidate();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        FpsViewer.fpsDisplayView().initial();
+        super.onDestroy();
     }
 }
