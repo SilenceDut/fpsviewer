@@ -8,8 +8,7 @@ import android.view.Choreographer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.silencedut.fpsviewer.FpsConstants.FPS_MAX_DEFAULT;
-import static com.silencedut.fpsviewer.FpsConstants.FRAME_INTERVAL_NANOS;
+import static com.silencedut.fpsviewer.FpsConstants.*;
 
 /**
  * @author SilenceDut
@@ -34,8 +33,10 @@ class FpsMonitor {
 
                 byte fps = (byte) (FPS_MAX_DEFAULT - skipped > 0 ? FPS_MAX_DEFAULT - skipped : 0);
 
+
+
                 for(FrameListener frameListener : mFrameListeners) {
-                    frameListener.onFrame(fps,skipped,diff);
+                    frameListener.onFrame(fps,skipped, (int) (diff/ NANOS_PER_MS));
                 }
             }
 
@@ -64,7 +65,7 @@ class FpsMonitor {
     }
 
     public interface FrameListener {
-        void onFrame(byte fps, int skipped, long frameCostMillis);
+        void onFrame(byte fps, int skipped, int frameCostMillis);
         void onRecord(boolean recording);
     }
 

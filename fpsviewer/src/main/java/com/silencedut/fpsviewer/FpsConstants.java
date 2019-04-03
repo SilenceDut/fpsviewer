@@ -6,8 +6,10 @@ package com.silencedut.fpsviewer;
  */
 public class FpsConstants {
 
-     static final int FPS_MAX_DEFAULT = 60;
-     static final int FPS_MAX_COUNT_DEFAULT = 36000;
-     static final double FRAME_INTERVAL_NANOS = Math.pow(10,9) / 60;
+     public static final int FPS_MAX_DEFAULT = 60;
+     public static final int FPS_MAX_COUNT_DEFAULT = 36000;
+     public static final double FRAME_INTERVAL_NANOS = 1000000000 / 60;
+     public static final int NANOS_PER_MS = 1000000;
+     public static final int MS_PER_SECOND = 1000;
 
 }
