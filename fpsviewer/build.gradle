@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 
 group='com.github.silencedut'
@@ -45,6 +47,7 @@ dependencies {
     compileOnly "com.android.support:appcompat-v7:$_supportVersion"
     compileOnly "android.arch.lifecycle:extensions:$lifecycle_extensions"
     implementation "com.github.PhilJay:MPAndroidChart:$mpchart"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 
 }

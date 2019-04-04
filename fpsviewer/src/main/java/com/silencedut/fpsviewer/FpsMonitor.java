@@ -3,6 +3,7 @@ package com.silencedut.fpsviewer;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.Choreographer;
+import com.duowan.makefriends.framework.context.BackgroundCallback;
 
 
 import java.util.ArrayList;
@@ -14,10 +15,11 @@ import static com.silencedut.fpsviewer.FpsConstants.*;
  * @author SilenceDut
  * @date 2019/3/18
  */
-class FpsMonitor {
+class FpsMonitor implements BackgroundCallback {
     private static final String TAG_SUFFIX = "FpsMonitor";
 
     private long mLastFrameTimeNanos;
+    private boolean isStarted;
 
     private List<FrameListener> mFrameListeners = new ArrayList<>();
 
@@ -47,6 +49,9 @@ class FpsMonitor {
 
 
     void recordFps(boolean start) {
+        if(start == isStarted) {
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             for(FrameListener frameListener : mFrameListeners) {
                 frameListener.onRecord(start);
@@ -57,11 +62,22 @@ class FpsMonitor {
             } else {
                 Choreographer.getInstance().removeFrameCallback(frameCallback);
             }
+            isStarted = start;
         }
     }
 
     public void addFrameListener(FrameListener frameListener) {
         mFrameListeners.add(frameListener);
+    }
+
+    @Override
+    public void onBack2foreground() {
+        recordFps(true);
+    }
+
+    @Override
+    public void onFore2background() {
+        recordFps(false);
     }
 
     public interface FrameListener {

@@ -1,6 +1,7 @@
 package com.silencedut.fpsviewer;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -12,13 +13,16 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
+import com.duowan.makefriends.framework.context.BackgroundCallback;
 import com.silencedut.fpsviewer.analyze.FpsAnalyzeActivity;
 
 /**
  * @author SilenceDut
  * @date 2019/3/26
  */
-public class DisplayView implements View.OnClickListener ,View.OnTouchListener{
+public class DisplayView implements View.OnClickListener ,View.OnTouchListener, BackgroundCallback {
+
+
 
     enum STATE {
         /**
@@ -115,20 +119,31 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener{
 
     }
 
+    @Override
+    public void onBack2foreground() {
+
+        mRootView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onFore2background() {
+        mRootView.setVisibility(View.GONE);
+    }
+
     DisplayView prepare() {
         FpsViewer.fpsMonitor().addFrameListener(new FpsMonitor.FrameListener() {
+
             @SuppressLint("SetTextI18n")
             @Override
             public void onFrame(byte fps, int skipped, int frameCostMillis) {
                 if(mState == STATE.UPDATE) {
                     mFpsTv.setText(fps+"");
                     if(fps < FPS_D) {
-                        mFpsTv.setBackground(mDGradeDrawable);
+                        mFpsTv.setBackgroundDrawable(mDGradeDrawable);
                     } else {
-                        mFpsTv.setBackground(mAGradeDrawable);
+                        mFpsTv.setBackgroundDrawable(mAGradeDrawable);
                     }
                     recordFrame(frameCostMillis);
-                    FpsLog.info("onFrame"+fps+";"+skipped+";"+frameCostMillis);
                 }
             }
 

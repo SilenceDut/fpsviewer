@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import com.duowan.makefriends.framework.context.Background;
 
 /**
  * @author SilenceDut
@@ -35,6 +36,7 @@ public class FpsViewer {
 
 
     public  void init(final Application application, @Nullable FpsConfig fpsConfig){
+        Background.INSTANCE.init(application);
         if(fpsConfig == null) {
            this.mFpsConfig = FpsConfig.defaultConfig();
         }else {
@@ -47,9 +49,13 @@ public class FpsViewer {
                 public void run() {
                     mDisplayView = DisplayView.create(application).prepare();
                     FpsViewer.fpsMonitor().recordFps(true);
+
+                    Background.INSTANCE.registerBackgroundCallback(mDisplayView);
+                    Background.INSTANCE.registerBackgroundCallback(mFpsMonitor);
                 }
             },3000);
         }
+
 
 
     }

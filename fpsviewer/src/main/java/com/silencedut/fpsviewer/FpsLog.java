@@ -6,7 +6,7 @@ import android.util.Log;
  * @author SilenceDut
  * @date 2019/3/31
  */
-class FpsLog {
+public class FpsLog {
     private static final String TAG = "FpsLog";
 
     public static void info(String info) {
