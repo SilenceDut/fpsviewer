@@ -1,9 +1,6 @@
-package com.duowan.makefriends.framework.context
+package com.silencedut.fpsviewer.background
 
-/**
- * 应用后台状态通知
- * Created by zhongyongsheng on 2018/5/2.
- */
+
 interface BackgroundCallback {
     /**
      * 从后台切到前台

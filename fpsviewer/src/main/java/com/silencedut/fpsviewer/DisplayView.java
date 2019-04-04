@@ -1,7 +1,6 @@
 package com.silencedut.fpsviewer;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -13,7 +12,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
-import com.duowan.makefriends.framework.context.BackgroundCallback;
+import com.silencedut.fpsviewer.background.BackgroundCallback;
 import com.silencedut.fpsviewer.analyze.FpsAnalyzeActivity;
 
 /**

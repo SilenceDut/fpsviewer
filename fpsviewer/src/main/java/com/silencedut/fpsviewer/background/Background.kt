@@ -1,4 +1,4 @@
-package com.duowan.makefriends.framework.context
+package com.silencedut.fpsviewer.background
 
 import android.app.Activity
 import android.app.ActivityManager

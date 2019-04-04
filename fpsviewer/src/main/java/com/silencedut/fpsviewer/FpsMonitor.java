@@ -3,7 +3,7 @@ package com.silencedut.fpsviewer;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.Choreographer;
-import com.duowan.makefriends.framework.context.BackgroundCallback;
+import com.silencedut.fpsviewer.background.BackgroundCallback;
 
 
 import java.util.ArrayList;

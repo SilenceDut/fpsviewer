@@ -4,7 +4,7 @@ import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import com.duowan.makefriends.framework.context.Background;
+import com.silencedut.fpsviewer.background.Background;
 
 /**
  * @author SilenceDut
