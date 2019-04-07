@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -11,7 +11,14 @@
     <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/fps_chart"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_gravity="center"/>
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
-</FrameLayout>
+    <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/fps_level_pieChart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+
+</LinearLayout>

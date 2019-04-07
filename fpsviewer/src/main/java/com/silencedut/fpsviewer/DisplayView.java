@@ -15,6 +15,9 @@ import android.widget.TextView;
 import com.silencedut.fpsviewer.background.BackgroundCallback;
 import com.silencedut.fpsviewer.analyze.FpsAnalyzeActivity;
 
+import static com.silencedut.fpsviewer.FpsConstants.FPS_MAX_COUNT_DEFAULT;
+
+
 /**
  * @author SilenceDut
  * @date 2019/3/26
@@ -31,11 +34,7 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
     }
     private static final String TAG = "FpsViewer";
     private static final int MOVE_ERROR = 20;
-    private static final int FPS_A = 50;
-    private static final int FPS_B= 45;
-    private static final int FPS_C= 30;
-    private static final int FPS_D= 15;
-    private static final int FPS_ZERO= 0;
+
 
     private View mRootView;
     private TextView mFpsTv;
@@ -56,10 +55,8 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
     private STATE mState = STATE.INITIAL;
     private boolean mBufferFull;
 
-    /**
-     * default about 10 minute(60*10)
-     */
-    private int[] mFrameCostBuffer = new int[36000];
+
+    private int[] mFrameCostBuffer = new int[FPS_MAX_COUNT_DEFAULT];
     private int mTotalBufferIndex;
 
     private long startTime;
@@ -137,7 +134,7 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
             public void onFrame(byte fps, int skipped, int frameCostMillis) {
                 if(mState == STATE.UPDATE) {
                     mFpsTv.setText(fps+"");
-                    if(fps < FPS_D) {
+                    if(fps < 15) {
                         mFpsTv.setBackgroundDrawable(mDGradeDrawable);
                     } else {
                         mFpsTv.setBackgroundDrawable(mAGradeDrawable);
@@ -190,30 +187,15 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
 
     private void recordFrame(int frameCost) {
 
-        if(mTotalBufferIndex < mFrameCostBuffer.length) {
-            mFrameCostBuffer[mTotalBufferIndex] = frameCost;
-        } else {
+        if(mTotalBufferIndex >= mFrameCostBuffer.length) {
             mTotalBufferIndex = 0;
             mBufferFull = true;
         }
+        mFrameCostBuffer[mTotalBufferIndex] = frameCost;
         mTotalBufferIndex ++ ;
 
     }
 
-//    private void recordFrame(byte fps,int skipped) {
-//
-//        int combine = fps << 26 ;
-//        combine = skipped | combine;
-//        if(mTotalBufferIndex < mFrameCostBuffer.length) {
-//            mFrameCostBuffer[mTotalBufferIndex] = combine;
-//        } else {
-//            mTotalBufferIndex = -1;
-//            mBufferFull = true;
-//        }
-//        mTotalBufferIndex++;
-//
-//
-//    }
 
     @Override
     public void onClick(View v) {
@@ -234,8 +216,17 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
             dismiss();
             Intent intent = new Intent(mFpsTv.getContext(),FpsAnalyzeActivity.class);
 
-            int[] copyBuffer  = new int[mTotalBufferIndex];
-            System.arraycopy(mFrameCostBuffer,0,copyBuffer,0,copyBuffer.length);
+            int[] copyBuffer;
+            if(mBufferFull) {
+                copyBuffer  = new int[mFrameCostBuffer.length];
+                System.arraycopy(mFrameCostBuffer,mTotalBufferIndex,copyBuffer,0,mFrameCostBuffer.length - mTotalBufferIndex);
+                System.arraycopy(mFrameCostBuffer,0,copyBuffer,mFrameCostBuffer.length - mTotalBufferIndex, mTotalBufferIndex);
+            }else {
+                copyBuffer  = new int[mTotalBufferIndex];
+                System.arraycopy(mFrameCostBuffer,0,copyBuffer,0, mTotalBufferIndex);
+            }
+
+
             Log.i(TAG,"buffer length "+copyBuffer.length);
             intent.putExtra(FpsAnalyzeActivity.FPS_BUFFER,copyBuffer);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

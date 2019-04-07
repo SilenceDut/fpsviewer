@@ -27,15 +27,13 @@ class FpsMonitor implements BackgroundCallback {
     private Choreographer.FrameCallback frameCallback = new Choreographer.FrameCallback() {
         @Override
         public void doFrame(long frameTimeNanos) {
-            if(mLastFrameTimeNanos!=0) {
+            if(mLastFrameTimeNanos != 0) {
 
                 long diff = frameTimeNanos - mLastFrameTimeNanos;
 
                 int skipped = (int)((diff - FRAME_INTERVAL_NANOS) / FRAME_INTERVAL_NANOS);
 
                 byte fps = (byte) (FPS_MAX_DEFAULT - skipped > 0 ? FPS_MAX_DEFAULT - skipped : 0);
-
-
 
                 for(FrameListener frameListener : mFrameListeners) {
                     frameListener.onFrame(fps,skipped, (int) (diff/ NANOS_PER_MS));
