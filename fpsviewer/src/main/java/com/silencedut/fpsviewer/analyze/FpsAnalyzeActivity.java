@@ -2,16 +2,14 @@ package com.silencedut.fpsviewer.analyze;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.SpannableString;
-import android.util.Log;
-import android.util.SparseArray;
+
 import android.view.MenuItem;
+import android.view.View;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -43,7 +41,7 @@ import static com.silencedut.fpsviewer.FpsConstants.MS_PER_SECOND;
 public class FpsAnalyzeActivity extends AppCompatActivity {
     private static final String TAG = "FpsAnalyzeActivity";
     public static final String FPS_BUFFER = "FPS_BUFFER";
-    public static final String FPS_BUFFER_INDEX = "FPS_BUFFER_INDEX";
+
     private LineChart mFpsChart;
     private PieChart mPieChart;
 
@@ -55,6 +53,14 @@ public class FpsAnalyzeActivity extends AppCompatActivity {
         if(actionBar != null){
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }else {
+            findViewById(R.id.finish_layout).setVisibility(View.VISIBLE);
+            findViewById(R.id.finish).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
         }
         mFpsChart = findViewById(R.id.fps_chart);
         mPieChart = findViewById(R.id.fps_level_pieChart);

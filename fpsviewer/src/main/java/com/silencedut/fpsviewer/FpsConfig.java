@@ -15,7 +15,6 @@ public class FpsConfig {
         return new Builder().build();
     }
 
-
     private boolean fpsViewEnable ;
     private boolean enableOutputFpsData ;
     /**
@@ -51,19 +50,14 @@ public class FpsConfig {
 
     private FpsConfig(Builder builder) {
         this.fpsViewEnable = builder.fpsViewEnable;
-        this.enableOutputFpsData = builder.enableOutputFpsData;
-        this.fpsSampleMillSeconds = builder.fpsSampleMillSeconds;
-        this.fpsSampleFrameCount = builder.fpsSampleFrameCount;
         this.taskExecutor = builder.taskExecutor;
     }
-
 
 
     public static final class Builder {
         private boolean fpsViewEnable = true;
         private boolean enableOutputFpsData = true;
-        private int fpsSampleMillSeconds = 100;
-        private int fpsSampleFrameCount = 10;
+
         ExecutorService taskExecutor;
         Builder() {
 
@@ -80,12 +74,10 @@ public class FpsConfig {
         }
 
         public Builder fpsSamplePeriod(int millSeconds){
-            this.fpsSampleMillSeconds  = millSeconds;
             return this;
         }
 
         public Builder fpsSampleFrameCount(int count){
-            this.fpsSampleFrameCount  = count;
             return this;
         }
 
