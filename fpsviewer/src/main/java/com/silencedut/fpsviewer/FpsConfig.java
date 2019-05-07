@@ -18,13 +18,13 @@ public class FpsConfig {
     private boolean fpsViewEnable ;
     private boolean enableOutputFpsData ;
     /**
-     * 采样周期,毫秒
+     * 获取主线程的执行栈周期,毫秒
      */
-    private int fpsSampleMillSeconds ;
+    private int traceSamplePeriod ;
     /**
-     * 每次采集多少帧
+     * 卡顿阈值,毫秒
      */
-    private int fpsSampleFrameCount ;
+    private int jankThreshold;
 
     private ExecutorService taskExecutor;
 
@@ -36,12 +36,12 @@ public class FpsConfig {
         return enableOutputFpsData;
     }
 
-    public int getFpsSampleMillSeconds() {
-        return fpsSampleMillSeconds;
+    public int getTraceSamplePeriod() {
+        return traceSamplePeriod;
     }
 
-    public int getFpsSampleFrameCount() {
-        return fpsSampleFrameCount;
+    public int getJankThreshold() {
+        return jankThreshold;
     }
 
     public ExecutorService getTaskExecutor() {
@@ -51,12 +51,23 @@ public class FpsConfig {
     private FpsConfig(Builder builder) {
         this.fpsViewEnable = builder.fpsViewEnable;
         this.taskExecutor = builder.taskExecutor;
+        this.enableOutputFpsData = builder.enableOutputFpsData;
+        this.jankThreshold = builder.jankThreshold;
+        this.traceSamplePeriod = builder.jankThreshold;
     }
 
 
     public static final class Builder {
-        private boolean fpsViewEnable = true;
-        private boolean enableOutputFpsData = true;
+        boolean fpsViewEnable = true;
+        boolean enableOutputFpsData = true;
+        /**
+         * 采样周期,毫秒
+         */
+        int traceSamplePeriod = 50;
+        /**
+         * 卡顿阈值,毫秒
+         */
+        int jankThreshold = 120;
 
         ExecutorService taskExecutor;
         Builder() {
@@ -73,11 +84,13 @@ public class FpsConfig {
             return this;
         }
 
-        public Builder fpsSamplePeriod(int millSeconds){
+        public Builder traceSamplePeriod(int traceSamplePeriod){
+            this.traceSamplePeriod = traceSamplePeriod;
             return this;
         }
 
-        public Builder fpsSampleFrameCount(int count){
+        public Builder jankThreshold(int jankThreshold){
+            this.jankThreshold = jankThreshold;
             return this;
         }
 
@@ -90,7 +103,7 @@ public class FpsConfig {
             if(taskExecutor == null) {
                 taskExecutor = new ThreadPoolExecutor(2, 2,
                         0L, TimeUnit.MILLISECONDS,
-                        new LinkedBlockingQueue<Runnable>(),new FpsThreadFactory());
+                        new LinkedBlockingQueue<Runnable>(128),new FpsThreadFactory());
             }
             return new FpsConfig(this);
         }

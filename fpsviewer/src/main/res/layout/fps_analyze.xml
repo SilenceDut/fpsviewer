@@ -12,8 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="#008577"
-        android:visibility="gone"
-    >
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/finish"
@@ -30,16 +29,17 @@
 
 
     <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/fps_chart"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+        android:id="@+id/fps_chart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+    />
 
     <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/fps_level_pieChart"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
+        android:layout_margin="20dp"
+        android:id="@+id/fps_level_pieChart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
 </LinearLayout>

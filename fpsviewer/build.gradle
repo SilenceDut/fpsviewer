@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'kotlin-kapt'
 
 group='com.github.silencedut'
 
@@ -39,16 +40,22 @@ android {
     artifacts {
         archives sourcesJar
     }
+
+    packagingOptions {
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     compileOnly "com.android.support:appcompat-v7:$_supportVersion"
-    compileOnly "android.arch.lifecycle:extensions:$lifecycle_extensions"
+    implementation "android.arch.lifecycle:extensions:$lifecycle_extensions"
     implementation "com.github.PhilJay:MPAndroidChart:$mpchart"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
+    implementation "com.github.silencedut:diffadapter:$diffadapter"
+    implementation "com.github.silencedut.hub:hub:$hub"
+    kapt "com.github.silencedut.hub:hub-compiler:$hub"
 
 }
 repositories {

@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import com.silencedut.fpsviewer.background.Background;
+import com.silencedut.fpsviewer.sniper.MainThreadJankSniper;
 
 /**
  * @author SilenceDut
@@ -12,7 +13,7 @@ import com.silencedut.fpsviewer.background.Background;
  */
 public class FpsViewer {
 
-    private FpsMonitor mFpsMonitor;
+    private FpsEventRelay mFpsEventCenter;
 
     private FpsConfig mFpsConfig;
 
@@ -34,7 +35,6 @@ public class FpsViewer {
         return sFpsViewer;
     }
 
-
     public  void init(final Application application, @Nullable FpsConfig fpsConfig){
         Background.INSTANCE.init(application);
         if(fpsConfig == null) {
@@ -42,16 +42,15 @@ public class FpsViewer {
         }else {
             this.mFpsConfig = fpsConfig;
         }
-        mFpsMonitor = new FpsMonitor();
+        mFpsEventCenter = new FpsEventRelay();
         if(this.mFpsConfig.isFpsViewEnable()) {
             FpsViewer.mainHandler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mDisplayView = DisplayView.create(application).prepare();
-                    FpsViewer.fpsMonitor().recordFps(true);
-
-                    Background.INSTANCE.registerBackgroundCallback(mDisplayView);
-                    Background.INSTANCE.registerBackgroundCallback(mFpsMonitor);
+                    MainThreadJankSniper.start();
+                    FpsViewer.fpsEventRelay().recordFps(true);
+                    Background.INSTANCE.registerBackgroundCallback(mFpsEventCenter);
                 }
             },3000);
         }
@@ -60,8 +59,8 @@ public class FpsViewer {
 
     }
 
-    public static FpsMonitor fpsMonitor() {
-        return getInstance().mFpsMonitor;
+    public static FpsEventRelay fpsEventRelay() {
+        return getInstance().mFpsEventCenter;
     }
 
     public static FpsConfig fpsConfig() {

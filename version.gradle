@@ -8,7 +8,9 @@ buildscript {
         _minSdkVersion = 15
         _versionCode = System.getenv("BUILD_NUMBER") as Integer ?: 1
         lifecycle_extensions = '1.1.1'
-        mpchart = 'v3.0.3'
+        mpchart = 'v3.1.0'
         kotlin_version = '1.3.21'
+        hub = '2.9.0'
+        diffadapter = '1.5.5'
     }
 }

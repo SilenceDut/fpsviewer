@@ -12,7 +12,6 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
-import com.silencedut.fpsviewer.background.BackgroundCallback;
 import com.silencedut.fpsviewer.analyze.FpsAnalyzeActivity;
 
 import static com.silencedut.fpsviewer.FpsConstants.FPS_MAX_COUNT_DEFAULT;
@@ -22,8 +21,7 @@ import static com.silencedut.fpsviewer.FpsConstants.FPS_MAX_COUNT_DEFAULT;
  * @author SilenceDut
  * @date 2019/3/26
  */
-public class DisplayView implements View.OnClickListener ,View.OnTouchListener, BackgroundCallback {
-
+public class DisplayView implements View.OnClickListener ,View.OnTouchListener, FpsEventRelay.FrameListener {
 
 
     enum STATE {
@@ -34,17 +32,17 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
     }
     private static final String TAG = "FpsViewer";
     private static final int MOVE_ERROR = 20;
-
+    private static final int FPS_LEVEL_BAD = 15;
 
     private View mRootView;
     private TextView mFpsTv;
     private TextView mAnalyze;
 
-    private WindowManager windowManager ;
-    private WindowManager.LayoutParams layoutParams;
+    private WindowManager mWindowManager;
+    private WindowManager.LayoutParams mLayoutParams;
 
-    private float startPositionX = 0;
-    private float startPositionY = 0;
+    private float mStartPositionX = 0;
+    private float mStartPositionY = 0;
 
     private float mTouchStartX;
     private float mTouchStartY;
@@ -53,13 +51,13 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
     private Drawable mAGradeDrawable;
 
     private STATE mState = STATE.INITIAL;
-    private boolean mBufferFull;
-
 
     private int[] mFrameCostBuffer = new int[FPS_MAX_COUNT_DEFAULT];
-    private int mTotalBufferIndex;
 
-    private long startTime;
+    private int mStartFrameIndex;
+    private int mCurrentFrameIndex;
+
+    private long mStartTime;
 
     static DisplayView create(final Context context ) {
         return new DisplayView(context);
@@ -89,77 +87,67 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
         mAGradeDrawable =  context.getResources().getDrawable(R.drawable.fps_a_bg);
         mDGradeDrawable = context.getResources().getDrawable(R.drawable.fps_d_bg);
 
-        windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        layoutParams = new WindowManager.LayoutParams();
+        mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        mLayoutParams = new WindowManager.LayoutParams();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            mLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+            mLayoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
         }
 
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+        mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
                 WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
 
-        layoutParams.format = PixelFormat.TRANSLUCENT;
-        layoutParams.gravity = Gravity.START;
-        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        mLayoutParams.format = PixelFormat.TRANSLUCENT;
+        mLayoutParams.gravity = Gravity.START;
+        mLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        mLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
         mFpsTv.setOnClickListener(this);
         mFpsTv.setOnTouchListener(this);
         mAnalyze.setOnClickListener(this);
         mAnalyze.setOnTouchListener(this);
+        mWindowManager.addView(mRootView, mLayoutParams);
+
+    }
 
 
+    @Override
+    public void onFrame(int frameIndex, int skipped, int frameCostMillis, byte fps) {
+        if(mState == STATE.UPDATE) {
+            mFpsTv.setText(fps+"");
+            if(fps < FPS_LEVEL_BAD) {
+                mFpsTv.setBackgroundDrawable(mDGradeDrawable);
+            } else {
+                mFpsTv.setBackgroundDrawable(mAGradeDrawable);
+            }
+            recordFrame(frameIndex,frameCostMillis);
+            mCurrentFrameIndex = frameIndex;
+        }
     }
 
     @Override
-    public void onBack2foreground() {
-
-        mRootView.setVisibility(View.VISIBLE);
+    public void onRecord(boolean recording) {
+        if(recording) {
+            mRootView.setVisibility(View.VISIBLE);
+        }else {
+            mRootView.setVisibility(View.GONE);
+        }
     }
 
-    @Override
-    public void onFore2background() {
-        mRootView.setVisibility(View.GONE);
-    }
+
 
     DisplayView prepare() {
-        FpsViewer.fpsMonitor().addFrameListener(new FpsMonitor.FrameListener() {
-
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onFrame(byte fps, int skipped, int frameCostMillis) {
-                if(mState == STATE.UPDATE) {
-                    mFpsTv.setText(fps+"");
-                    if(fps < 15) {
-                        mFpsTv.setBackgroundDrawable(mDGradeDrawable);
-                    } else {
-                        mFpsTv.setBackgroundDrawable(mAGradeDrawable);
-                    }
-                    recordFrame(frameCostMillis);
-                }
-            }
-
-            @Override
-            public void onRecord(boolean recording) {
-                if(recording) {
-                    windowManager.addView(mRootView, layoutParams);
-                }else {
-                    windowManager.removeView(mRootView);
-                }
-            }
-        });
+        FpsViewer.fpsEventRelay().addFrameListener(this);
         initial();
         return this;
     }
 
     private void startUpdate() {
-        mTotalBufferIndex = 0;
-        mBufferFull = false;
-        startTime = SystemClock.elapsedRealtime();
+        mStartFrameIndex = FpsViewer.fpsEventRelay().currentFrameIndex();
+        mStartTime = SystemClock.elapsedRealtime();
         mFpsTv.setVisibility(View.VISIBLE);
         mAnalyze.setVisibility(View.GONE);
 
@@ -168,7 +156,7 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
     private void stopUpdate() {
         mAnalyze.setVisibility(View.VISIBLE);
         mFpsTv.setText(R.string.go);
-        long duration = SystemClock.elapsedRealtime() - startTime;
+        long duration = SystemClock.elapsedRealtime() - mStartTime;
         FpsLog.info("duration:"+duration);
     }
 
@@ -184,15 +172,15 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
         mFpsTv.setText(R.string.go);
     }
 
-
-    private void recordFrame(int frameCost) {
-
-        if(mTotalBufferIndex >= mFrameCostBuffer.length) {
-            mTotalBufferIndex = 0;
-            mBufferFull = true;
+    /**
+     * if frameIndex > FPS_MAX_COUNT_DEFAULT ,just crash
+     */
+    private void recordFrame(int frameIndex ,int frameCost) {
+        try {
+            mFrameCostBuffer[frameIndex] = frameCost;
+        }catch (Exception e) {
+            FpsLog.error("recordFrame error ,"+e);
         }
-        mFrameCostBuffer[mTotalBufferIndex] = frameCost;
-        mTotalBufferIndex ++ ;
 
     }
 
@@ -211,24 +199,19 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
                     mState = STATE.STOP;
                 }
             }
-        }else if(v.getId() == R.id.analyze) {
+        }else if(v.getId() == R.id.analyze && mCurrentFrameIndex < FPS_MAX_COUNT_DEFAULT && mStartFrameIndex < FPS_MAX_COUNT_DEFAULT) {
             mState = STATE.ANALYZE;
             dismiss();
             Intent intent = new Intent(mFpsTv.getContext(),FpsAnalyzeActivity.class);
 
-            int[] copyBuffer;
-            if(mBufferFull) {
-                copyBuffer  = new int[mFrameCostBuffer.length];
-                System.arraycopy(mFrameCostBuffer,mTotalBufferIndex,copyBuffer,0,mFrameCostBuffer.length - mTotalBufferIndex);
-                System.arraycopy(mFrameCostBuffer,0,copyBuffer,mFrameCostBuffer.length - mTotalBufferIndex, mTotalBufferIndex);
-            }else {
-                copyBuffer  = new int[mTotalBufferIndex];
-                System.arraycopy(mFrameCostBuffer,0,copyBuffer,0, mTotalBufferIndex);
-            }
+            int frameLength = mCurrentFrameIndex - mStartFrameIndex ;
 
+            int[] copyBuffer  = new int[frameLength];
+            System.arraycopy(mFrameCostBuffer,mStartFrameIndex,copyBuffer,0, frameLength);
 
             Log.i(TAG,"buffer length "+copyBuffer.length);
             intent.putExtra(FpsAnalyzeActivity.FPS_BUFFER,copyBuffer);
+            intent.putExtra(FpsAnalyzeActivity.FPS_BUFFER_START,mStartFrameIndex);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mFpsTv.getContext().startActivity(intent);
         }
@@ -243,22 +226,22 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
             case MotionEvent.ACTION_DOWN:
                 mTouchStartX = event.getRawX();
                 mTouchStartY = event.getRawY();
-                startPositionX = layoutParams.x;
-                startPositionY = layoutParams.y;
+                mStartPositionX = mLayoutParams.x;
+                mStartPositionY = mLayoutParams.y;
 
                 break;
             case MotionEvent.ACTION_MOVE:
                 float rawX = event.getRawX();
                 float rawY = event.getRawY();
-                layoutParams.x +=  rawX - mTouchStartX;
-                layoutParams.y +=  rawY - mTouchStartY;
+                mLayoutParams.x +=  rawX - mTouchStartX;
+                mLayoutParams.y +=  rawY - mTouchStartY;
                 mTouchStartX = rawX;
                 mTouchStartY = rawY;
-                windowManager.updateViewLayout(mRootView, layoutParams);
+                mWindowManager.updateViewLayout(mRootView, mLayoutParams);
                 break;
             case MotionEvent.ACTION_UP:
-                if (Math.abs(layoutParams.x - startPositionX) < MOVE_ERROR && Math.abs(layoutParams.y
-                        - startPositionY) < MOVE_ERROR) {
+                if (Math.abs(mLayoutParams.x - mStartPositionX) < MOVE_ERROR && Math.abs(mLayoutParams.y
+                        - mStartPositionY) < MOVE_ERROR) {
 
                     FpsLog.info("isFpsView:"+(v.getId() == R.id.fps_tv)+";"+(v.getId() == R.id.analyze));
                     v.performClick();

@@ -1,6 +1,8 @@
 package com.silencedut.fpsviewersample
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -19,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     }
     private var mLastFrameNanos = 0L
 
+    private var asyncHandler: Handler?=null
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
@@ -42,12 +45,18 @@ class MainActivity : AppCompatActivity() {
         false
     }
 
+    init {
+        val asyncHandlerThread = HandlerThread("async")
+        asyncHandlerThread.start()
+        asyncHandler = Handler(asyncHandlerThread.looper)
+
+    }
 
     fun testToastA(isFirst: Boolean) {
         var trueId = 0L
         trueId = trueId or (1L shl 63)
         Log.d(TAG, "exception on random${(trueId)}+${(trueId shr 63) and 0x1} , ${(1L shl 62)}")
-        Thread.sleep(1000)
+        Thread.sleep(200)
         Log.d(TAG,"afterThread")
         if(isFirst) {
             testToastA(false)
@@ -60,7 +69,8 @@ class MainActivity : AppCompatActivity() {
         start = System.nanoTime()
         Choreographer.getInstance().postFrameCallback(callback)
         val delay = (1 until 3).random()
-        Thread.sleep(delay*1000L)
+        Thread.sleep(delay*500L)
+        testToastA(true)
         Log.d(TAG, "delay $delay ${start}")
     }
 
@@ -75,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         //                    Log.d(TAG, "currentTimeNano $frameTimeNanos"+"diffLast ${frameTimeNanos - mLastFrameNanos}")
         //                }
         fpsView?.let {
-           // doCalculateFrame(frameTimeNanos,it)
+            doCalculateFrame(frameTimeNanos,it)
         }
 
     }
@@ -116,6 +126,9 @@ class MainActivity : AppCompatActivity() {
         fpsView.text = (60-skipped).toString()
 
         mLastFrameNanos = frameTimeNanos
+//        val delay = (1 until 3).random()
+//        Thread.sleep(delay*1000L)
+//        Choreographer.getInstance().postFrameCallback(callback)
 
     }
 

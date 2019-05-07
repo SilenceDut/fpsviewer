@@ -8,6 +8,7 @@ import com.silencedut.fpsviewer.background.BackgroundCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.silencedut.fpsviewer.FpsConstants.*;
 
@@ -15,11 +16,11 @@ import static com.silencedut.fpsviewer.FpsConstants.*;
  * @author SilenceDut
  * @date 2019/3/18
  */
-class FpsMonitor implements BackgroundCallback {
-    private static final String TAG_SUFFIX = "FpsMonitor";
+public class FpsEventRelay implements BackgroundCallback {
 
     private long mLastFrameTimeNanos;
-    private boolean isStarted;
+    private boolean mIsStarted;
+    private int mFrameIndex;
 
     private List<FrameListener> mFrameListeners = new ArrayList<>();
 
@@ -27,17 +28,22 @@ class FpsMonitor implements BackgroundCallback {
     private Choreographer.FrameCallback frameCallback = new Choreographer.FrameCallback() {
         @Override
         public void doFrame(long frameTimeNanos) {
-            if(mLastFrameTimeNanos != 0) {
+            if (mLastFrameTimeNanos != 0) {
 
-                long diff = frameTimeNanos - mLastFrameTimeNanos;
+                long diffFrameCoast = frameTimeNanos - mLastFrameTimeNanos;
 
-                int skipped = (int)((diff - FRAME_INTERVAL_NANOS) / FRAME_INTERVAL_NANOS);
+                int skipped = (int) (diffFrameCoast / FRAME_INTERVAL_NANOS - 1);
 
                 byte fps = (byte) (FPS_MAX_DEFAULT - skipped > 0 ? FPS_MAX_DEFAULT - skipped : 0);
 
-                for(FrameListener frameListener : mFrameListeners) {
-                    frameListener.onFrame(fps,skipped, (int) (diff/ NANOS_PER_MS));
+                if (mFrameIndex >= Integer.MAX_VALUE) {
+                    mFrameIndex = 0;
                 }
+
+                for (FrameListener frameListener : mFrameListeners) {
+                    frameListener.onFrame(mFrameIndex, skipped, (int) (diffFrameCoast / NANOS_PER_MS), fps);
+                }
+                mFrameIndex ++;
             }
 
             mLastFrameTimeNanos = frameTimeNanos;
@@ -45,22 +51,26 @@ class FpsMonitor implements BackgroundCallback {
         }
     };
 
+    public int currentFrameIndex() {
+        return mFrameIndex;
+    }
+
 
     void recordFps(boolean start) {
-        if(start == isStarted) {
+        if (start == mIsStarted) {
             return;
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            for(FrameListener frameListener : mFrameListeners) {
+            for (FrameListener frameListener : mFrameListeners) {
                 frameListener.onRecord(start);
             }
-            if(start) {
+            if (start) {
                 mLastFrameTimeNanos = 0;
                 Choreographer.getInstance().postFrameCallback(frameCallback);
             } else {
                 Choreographer.getInstance().removeFrameCallback(frameCallback);
             }
-            isStarted = start;
+            mIsStarted = start;
         }
     }
 
@@ -79,7 +89,8 @@ class FpsMonitor implements BackgroundCallback {
     }
 
     public interface FrameListener {
-        void onFrame(byte fps, int skipped, int frameCostMillis);
+        void onFrame(int frameIndex, int skipped, int frameCostMillis, byte fps);
+
         void onRecord(boolean recording);
     }
 
