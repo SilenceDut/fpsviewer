@@ -1,1 +1,1 @@
-include ':app', ':fpsviewer', ':fpsviewer-release'
+include ':app', ':fpsviewer', ':fpsviewer-no-op'
