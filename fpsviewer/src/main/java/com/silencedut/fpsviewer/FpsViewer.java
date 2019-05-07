@@ -35,7 +35,7 @@ public class FpsViewer {
         return sFpsViewer;
     }
 
-    public  void init(final Application application, @Nullable FpsConfig fpsConfig){
+    public void init(final Application application, @Nullable FpsConfig fpsConfig){
         Background.INSTANCE.init(application);
         if(fpsConfig == null) {
            this.mFpsConfig = FpsConfig.defaultConfig();
