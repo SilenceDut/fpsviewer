@@ -10,7 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/fpsviewer" />
-            <option value="$PROJECT_DIR$/fpsviewer_release" />
+            <option value="$PROJECT_DIR$/fpsviewer-release" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
