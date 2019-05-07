@@ -12,6 +12,5 @@ public class FpsViewer {
     }
 
     public void init(final Application application,  FpsConfig fpsConfig){
-
     }
 }
