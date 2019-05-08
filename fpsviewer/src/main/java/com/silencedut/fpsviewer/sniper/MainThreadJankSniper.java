@@ -3,9 +3,10 @@ package com.silencedut.fpsviewer.sniper;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.support.annotation.WorkerThread;
-import com.silencedut.fpsviewer.FpsHelper;
-import com.silencedut.fpsviewer.FpsLog;
+import androidx.annotation.WorkerThread;
+import com.silencedut.fpsviewer.data.IJankRepository;
+import com.silencedut.fpsviewer.utilities.FpsHelper;
+import com.silencedut.fpsviewer.utilities.FpsLog;
 import com.silencedut.fpsviewer.FpsEventRelay;
 import com.silencedut.fpsviewer.FpsViewer;
 import com.silencedut.fpsviewer.transfer.TransferCenter;
@@ -22,7 +23,7 @@ public class MainThreadJankSniper implements FpsEventRelay.FrameListener {
     private Handler mSampleHandler;
     private List<StackTraceElement[]> mTracesInOneFrame= new ArrayList<>();
     private boolean mIsRecording;
-    private IJankInfoApi mJankInfoApi = TransferCenter.getImpl(IJankInfoApi.class);
+    private IJankRepository mJankRepository = TransferCenter.getImpl(IJankRepository.class);
 
     private Runnable mSampleTask = new Runnable() {
         @Override
@@ -97,7 +98,7 @@ public class MainThreadJankSniper implements FpsEventRelay.FrameListener {
                                 return arg1.getValue().compareTo(arg0.getValue());
                             }
                         });
-                        mJankInfoApi.storeJankTraceInfo(frameIndex,frameCostMillis,stackCountEntries);
+                        mJankRepository.storeJankTraceInfo(frameIndex,frameCostMillis,stackCountEntries);
                     }
                     mTracesInOneFrame.clear();
                 }

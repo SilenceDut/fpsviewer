@@ -3,7 +3,9 @@ package com.silencedut.fpsviewer;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
+import com.silencedut.fpsviewer.fpsdatashow.DisplayView;
 import com.silencedut.fpsviewer.background.Background;
 import com.silencedut.fpsviewer.sniper.MainThreadJankSniper;
 
@@ -17,8 +19,10 @@ public class FpsViewer {
 
     private FpsConfig mFpsConfig;
 
+    private Application application;
 
-    private @Nullable DisplayView mDisplayView;
+    private @Nullable
+    DisplayView mDisplayView;
 
     private Handler mMainHandler = new Handler(Looper.getMainLooper());
 
@@ -36,6 +40,7 @@ public class FpsViewer {
     }
 
     public void init(final Application application, @Nullable FpsConfig fpsConfig){
+        this.application = application;
         Background.INSTANCE.init(application);
         if(fpsConfig == null) {
            this.mFpsConfig = FpsConfig.defaultConfig();
@@ -75,4 +80,7 @@ public class FpsViewer {
         return getInstance().mMainHandler;
     }
 
+    public Application getApplication() {
+        return application;
+    }
 }

@@ -1,4 +1,4 @@
-package com.silencedut.fpsviewer.sniper.details
+package com.silencedut.fpsviewer.sniper
 
 import com.silencedut.diffadapter.data.BaseMutableData
 import com.silencedut.fpsviewer.R

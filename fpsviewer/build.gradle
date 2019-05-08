@@ -15,7 +15,7 @@ android {
         versionCode _versionCode
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -43,21 +43,40 @@ android {
 
     packagingOptions {
         exclude 'META-INF/proguard/androidx-annotations.pro'
+        exclude 'META-INF/atomicfu.kotlin_module'
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compileOnly "com.android.support:appcompat-v7:$_supportVersion"
-    implementation "android.arch.lifecycle:extensions:$lifecycle_extensions"
+    compileOnly "androidx.appcompat:appcompat:$appcompat"
     implementation "com.github.PhilJay:MPAndroidChart:$mpchart"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.github.silencedut:diffadapter:$diffadapter"
     implementation "com.github.silencedut.hub:hub:$hub"
+    implementation ("androidx.room:room-runtime:$roomVersion") {
+        exclude group : "androidx.arch.core"
+        exclude group : "androidx.annotation"
+    }
+    implementation ("androidx.room:room-ktx:$roomVersion"){
+        exclude group : "androidx.arch.core"
+        exclude group : "androidx.annotation"
+    }
+    implementation ("androidx.room:room-ktx:$roomVersion"){
+        exclude group : "androidx.arch.core"
+        exclude group : "androidx.annotation"
+    }
+    implementation "com.google.code.gson:gson:$gson"
+
+    kapt "androidx.room:room-compiler:$roomVersion"
     kapt "com.github.silencedut.hub:hub-compiler:$hub"
 
+    // Coroutines
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
 }
+
 repositories {
     mavenCentral()
 }

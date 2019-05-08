@@ -8,9 +8,8 @@ import com.silencedut.fpsviewer.background.BackgroundCallback;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.silencedut.fpsviewer.FpsConstants.*;
+import static com.silencedut.fpsviewer.utilities.FpsConstants.*;
 
 /**
  * @author SilenceDut

@@ -1,4 +1,4 @@
-package com.silencedut.fpsviewer;
+package com.silencedut.fpsviewer.utilities;
 
 /**
  * @author SilenceDut
@@ -15,6 +15,6 @@ public class FpsConstants {
      public static final int NANOS_PER_MS = 1000000;
      public static final int MS_PER_SECOND = 1000;
 
-
+     public static final String DATABASE_NAME = "fpsviewer-db";
 
 }

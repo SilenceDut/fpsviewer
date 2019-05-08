@@ -1,16 +1,11 @@
-package com.silencedut.fpsviewer.analyze;
+package com.silencedut.fpsviewer.fpsdatashow;
 
 import android.content.Intent;
 import android.graphics.Color;
 
 import android.graphics.Typeface;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 
 import android.view.MenuItem;
-import android.view.View;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -21,15 +16,17 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.silencedut.fpsviewer.*;
-import com.silencedut.fpsviewer.sniper.IJankInfoApi;
-import com.silencedut.fpsviewer.sniper.details.JankDetailsActivity;
+import com.silencedut.fpsviewer.data.IJankRepository;
+import com.silencedut.fpsviewer.sniper.JankDetailsActivity;
 import com.silencedut.fpsviewer.transfer.TransferCenter;
+import com.silencedut.fpsviewer.utilities.FpsConstants;
+import com.silencedut.fpsviewer.utilities.FpsLog;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.silencedut.fpsviewer.FpsConstants.*;
-import static com.silencedut.fpsviewer.FpsConstants.NANOS_PER_MS;
+import static com.silencedut.fpsviewer.utilities.FpsConstants.*;
+import static com.silencedut.fpsviewer.utilities.FpsConstants.NANOS_PER_MS;
 
 /**
  * @author SilenceDut
@@ -175,7 +172,7 @@ public class FpsAnalyzeActivity extends BaseFpsViewerActivity {
                 @Override
                 public void onValueSelected(Entry e, Highlight h) {
                     int jankPoint = (int) e.getData();
-                    if(canShowDetails(e.getY()) && TransferCenter.getImpl(IJankInfoApi.class).containsDetail(jankPoint) ) {
+                    if(canShowDetails(e.getY()) && TransferCenter.getImpl(IJankRepository.class).containsDetail(jankPoint) ) {
                         JankDetailsActivity.Companion.navigation(FpsAnalyzeActivity.this,jankPoint);
                     }
                     FpsLog.info("onValueSelected " + e);

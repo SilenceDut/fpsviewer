@@ -1,4 +1,4 @@
-package com.silencedut.fpsviewer;
+package com.silencedut.fpsviewer.fpsdatashow;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,9 +12,13 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
-import com.silencedut.fpsviewer.analyze.FpsAnalyzeActivity;
+import androidx.lifecycle.AndroidViewModel;
+import com.silencedut.fpsviewer.FpsEventRelay;
+import com.silencedut.fpsviewer.FpsViewer;
+import com.silencedut.fpsviewer.R;
+import com.silencedut.fpsviewer.utilities.FpsLog;
 
-import static com.silencedut.fpsviewer.FpsConstants.FPS_MAX_COUNT_DEFAULT;
+import static com.silencedut.fpsviewer.utilities.FpsConstants.FPS_MAX_COUNT_DEFAULT;
 
 
 /**
@@ -59,7 +63,7 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
 
     private long mStartTime;
 
-    static DisplayView create(final Context context ) {
+    public static DisplayView create(final Context context ) {
         return new DisplayView(context);
     }
 
@@ -139,7 +143,7 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
 
 
 
-    DisplayView prepare() {
+    public DisplayView prepare() {
         FpsViewer.fpsEventRelay().addFrameListener(this);
         initial();
         return this;
@@ -179,7 +183,7 @@ public class DisplayView implements View.OnClickListener ,View.OnTouchListener, 
         try {
             mFrameCostBuffer[frameIndex] = frameCost;
         }catch (Exception e) {
-            FpsLog.error("recordFrame error ,"+e);
+            stopUpdate();
         }
 
     }

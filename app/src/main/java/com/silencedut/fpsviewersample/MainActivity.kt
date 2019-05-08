@@ -3,12 +3,12 @@ package com.silencedut.fpsviewersample
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
-import android.support.design.widget.BottomNavigationView
-import android.support.v7.app.AppCompatActivity
+
 import android.util.Log
 import android.view.Choreographer
 import android.widget.TextView
-import com.silencedut.fpsviewer.FpsLog
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        FpsLog.info("onStop")
+
     }
 
     val callback = Choreographer.FrameCallback { frameTimeNanos ->

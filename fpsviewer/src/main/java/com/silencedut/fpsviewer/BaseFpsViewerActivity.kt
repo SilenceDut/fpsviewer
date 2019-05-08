@@ -1,9 +1,10 @@
 package com.silencedut.fpsviewer
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 
 /**
  * @author SilenceDut

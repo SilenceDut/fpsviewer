@@ -1,18 +1,18 @@
-package com.silencedut.fpsviewer.sniper.details
+package com.silencedut.fpsviewer.sniper
 
-import android.arch.lifecycle.Observer
+
 import android.content.Context
 import android.content.Intent
-import android.support.v7.widget.LinearLayoutManager
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+
 import com.silencedut.diffadapter.DiffAdapter
 import com.silencedut.fpsviewer.BaseFpsViewerActivity
-import com.silencedut.fpsviewer.FpsLog
+import com.silencedut.fpsviewer.utilities.FpsLog
 import com.silencedut.fpsviewer.R
-
-import com.silencedut.fpsviewer.sniper.IJankInfoApi
+import com.silencedut.fpsviewer.data.IJankRepository
 import com.silencedut.fpsviewer.transfer.TransferCenter
 import kotlinx.android.synthetic.main.fps_activity_jankdetails.*
-
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,7 +42,10 @@ class JankDetailsActivity : BaseFpsViewerActivity() {
 
     override fun initViews() {
         mJankDetailsAdapter = DiffAdapter(this)
-        mJankDetailsAdapter?.registerHolder(JankDetailHolder::class.java,JankDetailData.VIEW_ID)
+        mJankDetailsAdapter?.registerHolder(
+            JankDetailHolder::class.java,
+            JankDetailData.VIEW_ID
+        )
         jankDetailsRv.adapter = mJankDetailsAdapter
         jankDetailsRv.layoutManager = LinearLayoutManager(this)
         processData(intent)
@@ -62,7 +65,7 @@ class JankDetailsActivity : BaseFpsViewerActivity() {
                 return
             }
             mLastJankPoint = jankPoint
-            TransferCenter.getImpl(IJankInfoApi::class.java).jankDetailByPointData(it.getIntExtra(JANK_POINT,0))
+            TransferCenter.getImpl(IJankRepository::class.java).jankDetailByPointData(it.getIntExtra(JANK_POINT,0))
                 .observe(this, Observer { jankInfo ->
 
                     jankInfo?.occurredTime?.let { occurTime->
@@ -72,7 +75,7 @@ class JankDetailsActivity : BaseFpsViewerActivity() {
                     costTimeTv.text = "耗时:    ${jankInfo?.frameCost?.toString()}ms"
 
                     mJankDetailsAdapter?.datas = jankInfo?.stackWitchCount?.map { pair->
-                        JankDetailData(jankPoint,pair.second,pair.first)
+                        JankDetailData(jankPoint, pair.second, pair.first)
                     }
                 })
         }

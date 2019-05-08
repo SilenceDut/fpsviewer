@@ -1,4 +1,4 @@
-package com.silencedut.fpsviewer;
+package com.silencedut.fpsviewer.utilities;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -9,7 +9,6 @@ import android.util.DisplayMetrics;
  * @date 2019/4/13
  */
 public class FpsHelper {
-
 
 
 

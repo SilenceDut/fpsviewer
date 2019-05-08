@@ -1,4 +1,4 @@
-package com.silencedut.fpsviewer;
+package com.silencedut.fpsviewer.utilities;
 
 import android.util.Log;
 

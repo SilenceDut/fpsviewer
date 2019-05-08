@@ -1,4 +1,4 @@
-package com.silencedut.fpsviewer.sniper.details
+package com.silencedut.fpsviewer.sniper
 
 import android.view.View
 import android.widget.TextView
