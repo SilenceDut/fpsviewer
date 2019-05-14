@@ -1,86 +1,57 @@
 package com.silencedut.fpsviewer;
 
 import android.app.Application;
-import android.os.Handler;
-import android.os.Looper;
-
 import androidx.annotation.Nullable;
-import com.silencedut.fpsviewer.fpsdatashow.DisplayView;
+import com.silencedut.fpsviewer.api.IDisplayFps;
+import com.silencedut.fpsviewer.api.IEventRelay;
+import com.silencedut.fpsviewer.api.IUtilities;
 import com.silencedut.fpsviewer.background.Background;
-import com.silencedut.fpsviewer.sniper.MainThreadJankSniper;
+import com.silencedut.fpsviewer.jank.MainThreadJankSniper;
+import com.silencedut.fpsviewer.transfer.TransferCenter;
+import com.silencedut.hub_annotation.HubInject;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author SilenceDut
  * @date 2019/3/19
  */
-public class FpsViewer {
-
-    private FpsEventRelay mFpsEventCenter;
+@HubInject(api = IViewer.class)
+public class FpsViewer implements IViewer{
 
     private FpsConfig mFpsConfig;
 
-    private Application application;
-
-    private @Nullable
-    DisplayView mDisplayView;
-
-    private Handler mMainHandler = new Handler(Looper.getMainLooper());
-
-    private static volatile FpsViewer sFpsViewer;
-
-    public static FpsViewer getInstance() {
-        if(sFpsViewer == null) {
-            synchronized (FpsViewer.class) {
-                if(sFpsViewer == null) {
-                    sFpsViewer = new FpsViewer();
-                }
-            }
-        }
-        return sFpsViewer;
+    @Override
+    public void onCreate() {
     }
 
-    public void init(final Application application, @Nullable FpsConfig fpsConfig){
-        this.application = application;
-        Background.INSTANCE.init(application);
+    public static IViewer getViewer() {
+        return TransferCenter.getImpl(IViewer.class);
+    }
+
+    @Override
+    public void initViewer(@NotNull Application application, @Nullable FpsConfig fpsConfig) {
+        TransferCenter.getImpl(IUtilities.class).setApplication(application);
         if(fpsConfig == null) {
-           this.mFpsConfig = FpsConfig.defaultConfig();
+            this.mFpsConfig = FpsConfig.defaultConfig();
         }else {
             this.mFpsConfig = fpsConfig;
         }
-        mFpsEventCenter = new FpsEventRelay();
+        Background.INSTANCE.init(application);
         if(this.mFpsConfig.isFpsViewEnable()) {
-            FpsViewer.mainHandler().postDelayed(new Runnable() {
+            TransferCenter.getImpl(IUtilities.class).mainHandler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mDisplayView = DisplayView.create(application).prepare();
-                    MainThreadJankSniper.start();
-                    FpsViewer.fpsEventRelay().recordFps(true);
-                    Background.INSTANCE.registerBackgroundCallback(mFpsEventCenter);
+                    TransferCenter.getImpl(IDisplayFps.class).show();
+                    MainThreadJankSniper.prepare();
+                    TransferCenter.getImpl(IEventRelay.class).recordFps(true);
                 }
             },3000);
         }
-
-
-
     }
 
-    public static FpsEventRelay fpsEventRelay() {
-        return getInstance().mFpsEventCenter;
-    }
-
-    public static FpsConfig fpsConfig() {
-        return getInstance().mFpsConfig;
-    }
-
-    public static DisplayView fpsDisplayView() {
-        return getInstance().mDisplayView;
-    }
-
-    public static Handler mainHandler() {
-        return getInstance().mMainHandler;
-    }
-
-    public Application getApplication() {
-        return application;
+    @NotNull
+    @Override
+    public FpsConfig fpsConfig() {
+        return mFpsConfig;
     }
 }

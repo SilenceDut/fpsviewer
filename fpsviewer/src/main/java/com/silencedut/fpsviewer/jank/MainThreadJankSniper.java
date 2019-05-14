@@ -1,14 +1,15 @@
-package com.silencedut.fpsviewer.sniper;
+package com.silencedut.fpsviewer.jank;
 
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import androidx.annotation.WorkerThread;
-import com.silencedut.fpsviewer.data.IJankRepository;
-import com.silencedut.fpsviewer.utilities.FpsHelper;
+
+import com.silencedut.fpsviewer.FpsConfig;
+import com.silencedut.fpsviewer.IViewer;
+import com.silencedut.fpsviewer.api.IEventRelay;
+import com.silencedut.fpsviewer.api.IUtilities;
 import com.silencedut.fpsviewer.utilities.FpsLog;
-import com.silencedut.fpsviewer.FpsEventRelay;
-import com.silencedut.fpsviewer.FpsViewer;
 import com.silencedut.fpsviewer.transfer.TransferCenter;
 
 import java.util.*;
@@ -18,12 +19,13 @@ import java.util.*;
  * @author SilenceDut
  * @date 2019/4/11
  */
-public class MainThreadJankSniper implements FpsEventRelay.FrameListener {
+public class MainThreadJankSniper implements IEventRelay.FrameListener {
     private static final int METHOD_TRACE_SKIP = 2;
     private Handler mSampleHandler;
     private List<StackTraceElement[]> mTracesInOneFrame= new ArrayList<>();
     private boolean mIsRecording;
     private IJankRepository mJankRepository = TransferCenter.getImpl(IJankRepository.class);
+    private FpsConfig mFpsConfig = TransferCenter.getImpl(IViewer.class).fpsConfig();
 
     private Runnable mSampleTask = new Runnable() {
         @Override
@@ -31,7 +33,7 @@ public class MainThreadJankSniper implements FpsEventRelay.FrameListener {
 
             takeMainThreadSnapshot();
 
-            mSampleHandler.postDelayed(this,FpsViewer.fpsConfig().getTraceSamplePeriod());
+            mSampleHandler.postDelayed(this,mFpsConfig.getTraceSamplePeriod());
         }
     };
 
@@ -47,22 +49,21 @@ public class MainThreadJankSniper implements FpsEventRelay.FrameListener {
         HandlerThread sampleThread = new HandlerThread("trace_sample");
         sampleThread.start();
         mSampleHandler = new Handler(sampleThread.getLooper());
-        FpsViewer.fpsEventRelay().addFrameListener(this);
+        TransferCenter.getImpl(IEventRelay.class).addFrameListener(this);
     }
 
-    public static void start() {
+    public static void prepare() {
         new MainThreadJankSniper();
     }
 
 
     @Override
-    public void onFrame(int frameIndex, int skipped, int frameCostMillis, byte fps) {
+    public void onFrame(int frameIndex, int frameCostMillis) {
         if(this.mIsRecording) {
             mSampleHandler.removeCallbacks(mSampleTask);
             dealPreFrameTraceInfo(frameIndex,frameCostMillis);
-            mSampleHandler.postDelayed(mSampleTask,FpsViewer.fpsConfig().getTraceSamplePeriod());
+            mSampleHandler.postDelayed(mSampleTask,mFpsConfig.getTraceSamplePeriod());
         }
-
     }
 
     @Override
@@ -76,12 +77,12 @@ public class MainThreadJankSniper implements FpsEventRelay.FrameListener {
                 @Override
                 public void run() {
 
-                    if(frameCostMillis > FpsViewer.fpsConfig().getJankThreshold() && mTracesInOneFrame.size()>0) {
+                    if(frameCostMillis > mFpsConfig.getJankThreshold() && mTracesInOneFrame.size()>0) {
 
                         Map<String, Integer> stackCountMap = new HashMap<>(16);
                         String traceStr;
                         for (StackTraceElement[] trace : mTracesInOneFrame) {
-                            traceStr = FpsHelper.traceToString(METHOD_TRACE_SKIP, trace);
+                            traceStr = TransferCenter.getImpl(IUtilities.class).traceToString(METHOD_TRACE_SKIP, trace);
                             Integer count = stackCountMap.get(traceStr);
                             FpsLog.info("\n hashcode:" + traceStr.hashCode() + "\n trace:" + traceStr);
                             if (null != count) {

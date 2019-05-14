@@ -1,0 +1,7 @@
+
+<resources>
+    <string name="menu_period">一段时间</string>
+    <string name="menu_all">所有卡顿</string>
+    <string name="occurrence_time">发生时间:   %s</string>
+    <string name="cost_time">耗时:   %sms</string>
+</resources>

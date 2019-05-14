@@ -1,10 +1,14 @@
-package com.silencedut.fpsviewer
+package com.silencedut.fpsviewer.datashow
 
 import android.os.Bundle
+import android.os.PersistableBundle
 
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.silencedut.fpsviewer.R
+import com.silencedut.fpsviewer.api.IDisplayFps
+import com.silencedut.fpsviewer.transfer.TransferCenter
 
 /**
  * @author SilenceDut
@@ -38,4 +42,5 @@ abstract class BaseFpsViewerActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
 }

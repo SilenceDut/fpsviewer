@@ -1,4 +1,4 @@
-package com.silencedut.fpsviewer.data
+package com.silencedut.fpsviewer.jank
 
 import androidx.lifecycle.LiveData
 import com.silencedut.fpsviewer.data.JankInfo
@@ -17,4 +17,5 @@ interface IJankRepository : ITransfer {
 
     fun storeJankTraceInfo(frameIndex: Int, frameCostMillis: Int, stackCountEntries: List<MutableMap.MutableEntry<String, Int>>)
 
+    fun jankInfosByTime(startTime: Long = 0,sortByCostTime :Boolean = true) :LiveData<List<JankInfo>>
 }

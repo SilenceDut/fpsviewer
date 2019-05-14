@@ -3,13 +3,18 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <application>
         <activity
-                android:name=".fpsdatashow.FpsAnalyzeActivity"
+                android:name=".datashow.FpsChartActivity"
                 android:launchMode="singleTask">
         </activity>
 
         <activity
-                android:name=".sniper.JankDetailsActivity"
+                android:name=".datashow.JankDetailsActivity"
                 android:launchMode="singleTask">
+        </activity>
+
+        <activity
+                android:name=".datashow.JankStackInfosActivity"
+                android:launchMode="singleTop">
         </activity>
     </application>
 </manifest>

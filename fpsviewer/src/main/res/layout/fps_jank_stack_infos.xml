@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f3f3f3"
+    >
+
+    <FrameLayout
+        android:id="@+id/finish_layout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#008577"
+        android:visibility="gone">
+        <ImageView
+            android:id="@+id/finish"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/finish"
+            android:scaleType="centerInside"
+            android:layout_gravity="center_vertical"
+        />
+
+    </FrameLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/janks_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/jank_navigation" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/jank_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/windowBackground"
+            android:layout_alignParentBottom="true"
+            app:menu="@menu/jank_navigation"/>
+
+</RelativeLayout>

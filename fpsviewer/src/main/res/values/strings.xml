@@ -1,4 +1,8 @@
 <resources>
-    <string name="app_name">smoothsentry</string>
-    <string name="go">GO</string>
+    <string name="app_name" translatable="false">smoothsentry</string>
+    <string name="go" translatable="false">GO</string>
+    <string name="menu_period">spell</string>
+    <string name="menu_all">all</string>
+    <string name="occurrence_time">occurrence time %s</string>
+    <string name="cost_time">cost:   %sms</string>
 </resources>

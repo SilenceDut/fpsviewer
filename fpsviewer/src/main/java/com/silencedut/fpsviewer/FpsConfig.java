@@ -67,7 +67,7 @@ public class FpsConfig {
         /**
          * 卡顿阈值,毫秒
          */
-        int jankThreshold = 120;
+        int jankThreshold = 200;
 
         ExecutorService taskExecutor;
         Builder() {

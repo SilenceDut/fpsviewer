@@ -11,18 +11,30 @@
         android:layout_height="@dimen/fps_size"
         android:textColor="#fff"
         android:gravity="center"
-        android:background="@drawable/fps_a_bg"
+        android:background="@mipmap/fps_a_grade"
         android:text="@string/go"
-
     />
 
-    <TextView
-        android:id="@+id/analyze"
+    <ImageView
+        android:id="@+id/to_chart_tv"
         android:layout_width="@dimen/fps_size"
         android:layout_height="@dimen/fps_size"
         android:layout_marginLeft="45dp"
-        android:background="@mipmap/analyze"
-        android:visibility="visible"
+        android:src="@mipmap/chart_icon"
+        android:visibility="invisible"
+        android:background="@mipmap/fps_a_grade"
+        android:scaleType="centerInside"
+    />
+
+    <ImageView
+        android:id="@+id/to_jank_stack_tv"
+        android:layout_width="@dimen/fps_size"
+        android:layout_height="@dimen/fps_size"
+        android:layout_marginLeft="90dp"
+        android:background="@mipmap/fps_a_grade"
+        android:visibility="invisible"
+        android:src="@mipmap/jank_icon"
+        android:scaleType="centerInside"
     />
 
 

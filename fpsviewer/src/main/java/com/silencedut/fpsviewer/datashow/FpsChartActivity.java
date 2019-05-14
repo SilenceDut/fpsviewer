@@ -1,4 +1,4 @@
-package com.silencedut.fpsviewer.fpsdatashow;
+package com.silencedut.fpsviewer.datashow;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,8 +16,9 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.silencedut.fpsviewer.*;
-import com.silencedut.fpsviewer.data.IJankRepository;
-import com.silencedut.fpsviewer.sniper.JankDetailsActivity;
+import com.silencedut.fpsviewer.api.IDisplayFps;
+import com.silencedut.fpsviewer.api.INavigator;
+import com.silencedut.fpsviewer.jank.IJankRepository;
 import com.silencedut.fpsviewer.transfer.TransferCenter;
 import com.silencedut.fpsviewer.utilities.FpsConstants;
 import com.silencedut.fpsviewer.utilities.FpsLog;
@@ -32,11 +33,11 @@ import static com.silencedut.fpsviewer.utilities.FpsConstants.NANOS_PER_MS;
  * @author SilenceDut
  * @date 2019/3/20
  */
-public class FpsAnalyzeActivity extends BaseFpsViewerActivity {
+public class FpsChartActivity extends BaseFpsViewerActivity {
     private static final String TAG = "FpsAnalyzeActivity";
     public static final String FPS_BUFFER = "FPS_BUFFER";
     public static final String FPS_BUFFER_START = "START";
-
+    private FpsConfig mFpsConfig = TransferCenter.getImpl(IViewer.class).fpsConfig();
     private LineChart mFpsChart;
     private PieChart mPieChart;
 
@@ -130,7 +131,6 @@ public class FpsAnalyzeActivity extends BaseFpsViewerActivity {
         filterPieEntry(levelPieEntries, colors, bLevelDurations, "10~30", Color.parseColor("#5677fc"), temTotalCost);
         filterPieEntry(levelPieEntries, colors, aLevelDurations, "0~10", Color.parseColor("#3498c2"), temTotalCost);
 
-
         showLevelPieChart(levelPieEntries, colors);
 
     }
@@ -173,7 +173,7 @@ public class FpsAnalyzeActivity extends BaseFpsViewerActivity {
                 public void onValueSelected(Entry e, Highlight h) {
                     int jankPoint = (int) e.getData();
                     if(canShowDetails(e.getY()) && TransferCenter.getImpl(IJankRepository.class).containsDetail(jankPoint) ) {
-                        JankDetailsActivity.Companion.navigation(FpsAnalyzeActivity.this,jankPoint);
+                        TransferCenter.getImpl(INavigator.class).toJankDetailsActivity(FpsChartActivity.this,jankPoint);
                     }
                     FpsLog.info("onValueSelected " + e);
                 }
@@ -213,8 +213,8 @@ public class FpsAnalyzeActivity extends BaseFpsViewerActivity {
     }
 
     private boolean canShowDetails(float fps) {
-        FpsLog.info("canShowMarker "+fps+",,"+(FPS_MAX_DEFAULT - FpsViewer.fpsConfig().getJankThreshold()*NANOS_PER_MS/ FpsConstants.FRAME_INTERVAL_NANOS));
-        return fps < (FPS_MAX_DEFAULT - FpsViewer.fpsConfig().getJankThreshold()*NANOS_PER_MS/ FpsConstants.FRAME_INTERVAL_NANOS);
+        FpsLog.info("canShowMarker "+fps+",,"+(FPS_MAX_DEFAULT - mFpsConfig.getJankThreshold()*NANOS_PER_MS/ FpsConstants.FRAME_INTERVAL_NANOS));
+        return fps < (FPS_MAX_DEFAULT - mFpsConfig.getJankThreshold()*NANOS_PER_MS/ FpsConstants.FRAME_INTERVAL_NANOS);
     }
 
 
@@ -281,7 +281,7 @@ public class FpsAnalyzeActivity extends BaseFpsViewerActivity {
 
     @Override
     protected void onDestroy() {
-        FpsViewer.fpsDisplayView().initial();
+        TransferCenter.getImpl(IDisplayFps.class).show();
         super.onDestroy();
     }
 

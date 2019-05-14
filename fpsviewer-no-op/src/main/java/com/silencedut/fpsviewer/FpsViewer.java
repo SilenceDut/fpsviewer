@@ -6,11 +6,19 @@ import android.app.Application;
  * @author SilenceDut
  * @date 2019/5/7
  */
-public class FpsViewer {
-    public static FpsViewer getInstance() {
-        return new FpsViewer();
+public class FpsViewer implements IViewer{
+
+    public static IViewer getViewer() {
+        return  new FpsViewer();
     }
 
-    public void init(final Application application,  FpsConfig fpsConfig){
+    @Override
+    public void initViewer(Application application, FpsConfig fpsConfig) {
+
+    }
+
+    @Override
+    public FpsConfig fpsConfig() {
+        return null;
     }
 }

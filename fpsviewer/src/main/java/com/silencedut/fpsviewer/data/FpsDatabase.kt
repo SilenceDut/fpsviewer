@@ -20,10 +20,10 @@ abstract class FpsDatabase : RoomDatabase() {
         // For Singleton instantiation
         @Volatile private var instance: FpsDatabase? = null
 
-        fun getInstance(): FpsDatabase {
+        fun getInstance(context: Context): FpsDatabase {
 
             return instance ?: synchronized(this) {
-                instance ?: buildDatabase(FpsViewer.getInstance().application).also { instance = it }
+                instance ?: buildDatabase(context).also { instance = it }
             }
         }
 
