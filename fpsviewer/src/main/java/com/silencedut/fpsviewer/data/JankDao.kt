@@ -6,6 +6,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 /**
  * @author SilenceDut
@@ -21,6 +22,10 @@ interface JankDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(jankInfo: JankInfo)
 
-    @Query("DELETE FROM jank_table")
-    fun deleteAll()
+    @Query("DELETE FROM jank_table WHERE occurredTime =:jankId")
+    fun delete(jankId : Long)
+
+    @Update
+    fun update(jankInfo: JankInfo)
+
 }

@@ -10,26 +10,36 @@
     <FrameLayout
         android:id="@+id/finish_layout"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:background="#008577"
-        android:visibility="gone">
+        android:layout_height="56dp"
+        android:background="@color/design_default_color_primary">
+
         <ImageView
             android:id="@+id/finish"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/fps_title_icon_size"
+            android:layout_height="@dimen/fps_title_icon_size"
             android:layout_marginLeft="10dp"
-            android:src="@mipmap/finish"
+            android:src="@mipmap/fps_finish"
             android:scaleType="centerInside"
             android:layout_gravity="center_vertical"
-        />
+            />
 
+
+        <ImageView
+            android:id="@+id/sort"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical|right"
+            android:scaleType="centerInside"
+            android:src="@mipmap/fps_sort_occourtime"
+            android:layout_marginRight="10dp"/>
     </FrameLayout>
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/janks_rv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/finish_layout"
         android:layout_above="@+id/jank_navigation" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

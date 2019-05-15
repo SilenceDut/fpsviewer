@@ -7,6 +7,7 @@ import com.silencedut.fpsviewer.api.IEventRelay
 import com.silencedut.fpsviewer.background.Background
 import com.silencedut.fpsviewer.background.BackgroundCallback
 import com.silencedut.fpsviewer.utilities.FpsConstants
+import com.silencedut.fpsviewer.utilities.FpsLog
 import com.silencedut.hub_annotation.HubInject
 import java.util.ArrayList
 
@@ -22,7 +23,6 @@ class EventRelayImpl : IEventRelay,BackgroundCallback{
 
     private var mLastFrameTimeNanos: Long = 0
     private var mIsStarted: Boolean = false
-    private var mFrameIndex: Int = 0
 
     private val mFrameListeners = ArrayList<IEventRelay.FrameListener>()
 
@@ -33,23 +33,14 @@ class EventRelayImpl : IEventRelay,BackgroundCallback{
 
                 val diffFrameCoast = (frameTimeNanos - mLastFrameTimeNanos)/FpsConstants.NANOS_PER_MS
 
-                if (mFrameIndex >= Integer.MAX_VALUE) {
-                    mFrameIndex = 0
-                }
-
                 for (frameListener in mFrameListeners) {
-                    frameListener.onFrame(mFrameIndex, diffFrameCoast.toInt())
+                    frameListener.onFrame(System.currentTimeMillis(), diffFrameCoast.toInt())
                 }
-                mFrameIndex++
             }
 
             mLastFrameTimeNanos = frameTimeNanos
             Choreographer.getInstance().postFrameCallback(this)
         }
-    }
-
-    override fun currentFrameIndex(): Int {
-        return mFrameIndex
     }
 
 

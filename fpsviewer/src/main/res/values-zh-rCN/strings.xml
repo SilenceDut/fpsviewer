@@ -4,4 +4,6 @@
     <string name="menu_all">所有卡顿</string>
     <string name="occurrence_time">发生时间:   %s</string>
     <string name="cost_time">耗时:   %sms</string>
+    <string name="average_fps">平均帧率：</string>
+    <string name="average_frame_skip">平均每秒丢帧数</string>
 </resources>

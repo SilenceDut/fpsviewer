@@ -17,19 +17,16 @@ class NavigatorImpl : INavigator {
 
     }
 
-    override fun toFpsChatActivity(context: Context,fpsBuffer:IntArray,startFrameIndex : Int) {
+    override fun toFpsChatActivity(context: Context) {
         val intent = Intent(context, FpsChartActivity::class.java)
-
-        intent.putExtra(FpsChartActivity.FPS_BUFFER, fpsBuffer)
-        intent.putExtra(FpsChartActivity.FPS_BUFFER_START, startFrameIndex)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(intent)
     }
 
-    override fun  toJankDetailsActivity(context: Context ,jankPoint:Int){
+    override fun  toJankDetailsActivity(context: Context, jankId:Long){
         FpsLog.info("JankDetailsActivity navigation")
         val intent = Intent(context, JankDetailsActivity::class.java)
-        intent.putExtra(JANK_POINT,jankPoint)
+        intent.putExtra(JANK_ID,jankId)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(intent)
     }

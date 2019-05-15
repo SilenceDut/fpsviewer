@@ -18,6 +18,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.silencedut.fpsviewer.*;
 import com.silencedut.fpsviewer.api.IDisplayFps;
 import com.silencedut.fpsviewer.api.INavigator;
+import com.silencedut.fpsviewer.data.JankInfo;
 import com.silencedut.fpsviewer.jank.IJankRepository;
 import com.silencedut.fpsviewer.transfer.TransferCenter;
 import com.silencedut.fpsviewer.utilities.FpsConstants;
@@ -35,8 +36,6 @@ import static com.silencedut.fpsviewer.utilities.FpsConstants.NANOS_PER_MS;
  */
 public class FpsChartActivity extends BaseFpsViewerActivity {
     private static final String TAG = "FpsAnalyzeActivity";
-    public static final String FPS_BUFFER = "FPS_BUFFER";
-    public static final String FPS_BUFFER_START = "START";
     private FpsConfig mFpsConfig = TransferCenter.getImpl(IViewer.class).fpsConfig();
     private LineChart mFpsChart;
     private PieChart mPieChart;
@@ -76,8 +75,7 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
             return;
         }
 
-        int[] fpsBuffer = intent.getIntArrayExtra(FPS_BUFFER);
-        int start = intent.getIntExtra(FPS_BUFFER_START,0);
+        long[] fpsBuffer = TransferCenter.getImpl(IDisplayFps.class).recordDatas();
 
         FpsLog.info("buffer length " + fpsBuffer.length);
 
@@ -91,12 +89,13 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
         int dLevelDurations = 0;
         int frozenDurations = 0;
 
-        for (int index = 0; index < fpsBuffer.length; index++) {
+        for (long record : fpsBuffer) {
 
-            int perFrameCost = fpsBuffer[index];
+            int perFrameCost = TransferCenter.getImpl(IDisplayFps.class).frameCostMillis(record);
 
             temTotalCost += perFrameCost;
-            int skipped = (int) ((perFrameCost * FpsConstants.NANOS_PER_MS - FRAME_INTERVAL_NANOS) / FRAME_INTERVAL_NANOS);
+
+            int skipped = (int) ((perFrameCost * NANOS_PER_MS - FRAME_INTERVAL_NANOS) / FRAME_INTERVAL_NANOS);
 
             if (skipped < 0) {
                 FpsLog.info("perFrameCost " + perFrameCost);
@@ -104,7 +103,7 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
 
             int fps = Math.max(0, Math.min(FPS_MAX_DEFAULT - skipped, 60));
 
-            fpsEntries.add(new Entry(temTotalCost, fps,start+index));
+            fpsEntries.add(new Entry(temTotalCost, fps, TransferCenter.getImpl(IDisplayFps.class).frameTimeMillis(record)));
 
             if (skipped >= 60) {
                 frozenDurations += perFrameCost;
@@ -117,9 +116,7 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
             } else if (skipped >= 0) {
                 aLevelDurations += perFrameCost;
             }
-
         }
-
         showRealRimeFpsChart(fpsEntries, fpsBuffer, temTotalCost);
 
         List<PieEntry> levelPieEntries = new ArrayList<>();
@@ -145,7 +142,7 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
     }
 
 
-    private void showRealRimeFpsChart(List<Entry> fpsEntries, int[] fpsBuffer, int totalCost) {
+    private void showRealRimeFpsChart(List<Entry> fpsEntries, long[] fpsBuffer, int totalCost) {
 
         if (fpsEntries.size() > 0) {
             final LineDataSet dataSet = new LineDataSet(fpsEntries, "FPS");
@@ -153,7 +150,8 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
             dataSet.setDrawCircles(false);
             dataSet.setValueTextSize(0);
 
-            dataSet.setLabel("The average frame rate：" + Math.min(fpsBuffer.length * MS_PER_SECOND / totalCost, FPS_MAX_DEFAULT));
+            String label = getString(R.string.average_fps);
+            dataSet.setLabel(label + Math.min(fpsBuffer.length * MS_PER_SECOND / totalCost, FPS_MAX_DEFAULT));
             dataSet.setDrawFilled(false);
 
 
@@ -171,9 +169,10 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
             mFpsChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
                 @Override
                 public void onValueSelected(Entry e, Highlight h) {
-                    int jankPoint = (int) e.getData();
-                    if(canShowDetails(e.getY()) && TransferCenter.getImpl(IJankRepository.class).containsDetail(jankPoint) ) {
-                        TransferCenter.getImpl(INavigator.class).toJankDetailsActivity(FpsChartActivity.this,jankPoint);
+                    long jankPoint = (long) e.getData();
+                    JankInfo jankInfo = TransferCenter.getImpl(IJankRepository.class).jankDetailByPointData(jankPoint).getValue();
+                    if(canShowDetails(e.getY()) && jankInfo!=null) {
+                        TransferCenter.getImpl(INavigator.class).toJankDetailsActivity(FpsChartActivity.this,jankInfo.getOccurredTime());
                     }
                     FpsLog.info("onValueSelected " + e);
                 }
@@ -247,7 +246,8 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
         mPieChart.setRotationEnabled(true);
         mPieChart.setHighlightPerTapEnabled(true);
 
-        PieDataSet dataSet = new PieDataSet(levelPieEntries, "frame skip per second during this period");
+        String pieLabel = getString(R.string.average_frame_skip);
+        PieDataSet dataSet = new PieDataSet(levelPieEntries, pieLabel);
         dataSet.setValueLineColor(Color.parseColor("#212121"));
         dataSet.setYValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
 

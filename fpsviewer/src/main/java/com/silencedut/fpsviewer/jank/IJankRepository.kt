@@ -11,11 +11,15 @@ import com.silencedut.fpsviewer.transfer.ITransfer
  */
 interface IJankRepository : ITransfer {
 
-    fun containsDetail(jankPoint: Int):Boolean
+    fun jankDetailByPointData(jankId: Long): LiveData<JankInfo?>
 
-    fun jankDetailByPointData(jankPoint: Int): LiveData<JankInfo?>
+    fun storeJankTraceInfo(frameTimeMillis: Long,frameCostMillis: Int, stackCountEntries: List<MutableMap.MutableEntry<String, Int>>)
 
-    fun storeJankTraceInfo(frameIndex: Int, frameCostMillis: Int, stackCountEntries: List<MutableMap.MutableEntry<String, Int>>)
+    fun jankInfosAfterTime(startTime: Long = 0, sortByCostTime :Boolean = true) :LiveData<List<JankInfo>>
 
-    fun jankInfosByTime(startTime: Long = 0,sortByCostTime :Boolean = true) :LiveData<List<JankInfo>>
+    fun delete(jankId: Long)
+
+    fun markResolved(jankId: Long)
+
+    fun resolvedJankLiveData():LiveData<Long>
 }

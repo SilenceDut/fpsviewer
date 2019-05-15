@@ -4,13 +4,14 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.silencedut.diffadapter.DiffAdapter
+import com.silencedut.diffadapter.utils.UpdateFunction
 import com.silencedut.fpsviewer.R
 import com.silencedut.fpsviewer.api.IDisplayFps
 import com.silencedut.fpsviewer.datashow.adapter.JankInfoData
 import com.silencedut.fpsviewer.datashow.adapter.JankInfoHolder
 import com.silencedut.fpsviewer.jank.IJankRepository
 import com.silencedut.fpsviewer.transfer.TransferCenter
-import kotlinx.android.synthetic.main.fps_jank_stack_infos.*
+import kotlinx.android.synthetic.main.fps_jank_activity_stackinfos.*
 
 /**
  * @author SilenceDut
@@ -18,21 +19,24 @@ import kotlinx.android.synthetic.main.fps_jank_stack_infos.*
  */
 class JankStackInfosActivity : BaseFpsViewerActivity() {
     private var mJanksAdapter: DiffAdapter?=null
+    private var currentByCostTime = true
+    private var startTime =0L
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_period -> {
+                startTime = TransferCenter.getImpl(IDisplayFps::class.java).periodStartTime()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_all -> {
+                startTime = 0
                 return@OnNavigationItemSelectedListener true
             }
         }
         false
     }
 
-
     override fun provideContentViewId(): Int {
-        return R.layout.fps_jank_stack_infos
+        return R.layout.fps_jank_activity_stackinfos
     }
 
     override fun initViews() {
@@ -44,7 +48,28 @@ class JankStackInfosActivity : BaseFpsViewerActivity() {
         )
         janks_rv.adapter = mJanksAdapter
         janks_rv.layoutManager = LinearLayoutManager(this)
-        TransferCenter.getImpl(IJankRepository::class.java).jankInfosByTime(0).observe(this, Observer {
+
+        showJankInfos(startTime,currentByCostTime)
+
+        sort?.setOnClickListener {
+            showJankInfos(startTime,!currentByCostTime)
+        }
+
+        mJanksAdapter?.addUpdateMediator( TransferCenter.getImpl(IJankRepository::class.java).resolvedJankLiveData(),
+            object :UpdateFunction<Long, JankInfoData> {
+                override fun providerMatchFeature(input: Long): Long {
+                   return input
+                }
+
+                override fun applyChange(input: Long, originalData: JankInfoData): JankInfoData {
+                    originalData.jankInfo.resolved = true
+                    return originalData
+                }
+            })
+    }
+
+    private fun showJankInfos(startTime: Long = 0, sortByCostTime :Boolean = true){
+        TransferCenter.getImpl(IJankRepository::class.java).jankInfosAfterTime(startTime,sortByCostTime).observe(this, Observer {
             mJanksAdapter?.datas = it?.map { jankInfo->
                 JankInfoData(jankInfo)
             }

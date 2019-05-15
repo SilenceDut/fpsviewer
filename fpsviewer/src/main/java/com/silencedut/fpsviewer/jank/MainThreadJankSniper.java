@@ -58,10 +58,10 @@ public class MainThreadJankSniper implements IEventRelay.FrameListener {
 
 
     @Override
-    public void onFrame(int frameIndex, int frameCostMillis) {
+    public void onFrame(long frameTimeMillis, int frameCostMillis) {
         if(this.mIsRecording) {
             mSampleHandler.removeCallbacks(mSampleTask);
-            dealPreFrameTraceInfo(frameIndex,frameCostMillis);
+            dealPreFrameTraceInfo(frameTimeMillis,frameCostMillis);
             mSampleHandler.postDelayed(mSampleTask,mFpsConfig.getTraceSamplePeriod());
         }
     }
@@ -71,7 +71,7 @@ public class MainThreadJankSniper implements IEventRelay.FrameListener {
         this.mIsRecording = recording;
     }
 
-    private void dealPreFrameTraceInfo(final int frameIndex,final int frameCostMillis) {
+    private void dealPreFrameTraceInfo(final long frameTimeMillis,final int frameCostMillis) {
 
             mSampleHandler.post(new Runnable() {
                 @Override
@@ -99,7 +99,7 @@ public class MainThreadJankSniper implements IEventRelay.FrameListener {
                                 return arg1.getValue().compareTo(arg0.getValue());
                             }
                         });
-                        mJankRepository.storeJankTraceInfo(frameIndex,frameCostMillis,stackCountEntries);
+                        mJankRepository.storeJankTraceInfo(frameTimeMillis,frameCostMillis,stackCountEntries);
                     }
                     mTracesInOneFrame.clear();
                 }

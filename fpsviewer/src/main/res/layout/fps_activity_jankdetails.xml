@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <FrameLayout
-            android:id="@+id/finish_layout"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:background="#008577"
-            android:visibility="gone">
+        android:id="@+id/finish_layout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/design_default_color_primary">
 
         <ImageView
-                android:id="@+id/finish"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="10dp"
-                android:src="@mipmap/finish"
-                android:scaleType="centerInside"
-                android:layout_gravity="center_vertical"
-        />
+            android:id="@+id/finish"
+            android:layout_width="@dimen/fps_title_icon_size"
+            android:layout_height="@dimen/fps_title_icon_size"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/fps_finish"
+            />
 
+        <ImageView
+            android:id="@+id/resolve_status"
+            android:layout_width="@dimen/fps_title_icon_size"
+            android:layout_height="@dimen/fps_title_icon_size"
+            android:layout_gravity="center_vertical|right"
+            android:scaleType="centerInside"
+            android:src="@mipmap/fps_resolve"
+            android:layout_marginRight="10dp"
+            />
     </FrameLayout>
 
 
@@ -35,35 +43,35 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#000"
-            android:textSize="18sp"
             android:gravity="center"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-        />
+            android:textColor="#000"
+            android:textSize="18sp"
+            />
 
         <View
-            android:background="#ccc"
             android:layout_width="1dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:background="#ccc" />
 
         <TextView
             android:id="@+id/costTimeTv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#000"
-            android:textSize="18sp"
             android:gravity="center"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-        />
+            android:textColor="#000"
+            android:textSize="18sp"
+            />
     </LinearLayout>
 
     <View
-        android:background="#ccc"
         android:layout_width="match_parent"
-        android:layout_height="1px"/>
+        android:layout_height="1px"
+        android:background="#ccc" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -73,41 +81,41 @@
         <TextView
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
             android:gravity="center"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:textColor="#000"
             android:text="相同堆栈数"
-        />
+            android:textColor="#000"
+            android:textSize="12sp"
+            />
 
         <View
-            android:background="#ccc"
             android:layout_width="1dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:background="#ccc" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#000"
-            android:textSize="14sp"
+            android:layout_gravity="center"
             android:gravity="center"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:layout_gravity="center"
             android:text="堆栈信息"
-        />
+            android:textColor="#000"
+            android:textSize="14sp"
+            />
 
     </LinearLayout>
 
     <View
-        android:background="#ccc"
         android:layout_width="match_parent"
-        android:layout_height="1px"/>
+        android:layout_height="1px"
+        android:background="#ccc" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/jankDetailsRv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

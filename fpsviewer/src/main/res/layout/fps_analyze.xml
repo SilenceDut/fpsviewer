@@ -10,16 +10,15 @@
     <FrameLayout
         android:id="@+id/finish_layout"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:background="#008577"
-        android:visibility="gone">
+        android:layout_height="56dp"
+        android:background="@color/design_default_color_primary">
 
         <ImageView
             android:id="@+id/finish"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/fps_title_icon_size"
+            android:layout_height="@dimen/fps_title_icon_size"
             android:layout_marginLeft="10dp"
-            android:src="@mipmap/finish"
+            android:src="@mipmap/fps_finish"
             android:scaleType="centerInside"
             android:layout_gravity="center_vertical"
         />

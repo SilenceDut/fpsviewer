@@ -7,8 +7,8 @@
 
     <TextView
         android:id="@+id/fps_tv"
-        android:layout_width="@dimen/fps_size"
-        android:layout_height="@dimen/fps_size"
+        android:layout_width="@dimen/fps_navigation_icon_size"
+        android:layout_height="@dimen/fps_navigation_icon_size"
         android:textColor="#fff"
         android:gravity="center"
         android:background="@mipmap/fps_a_grade"
@@ -17,8 +17,8 @@
 
     <ImageView
         android:id="@+id/to_chart_tv"
-        android:layout_width="@dimen/fps_size"
-        android:layout_height="@dimen/fps_size"
+        android:layout_width="@dimen/fps_navigation_icon_size"
+        android:layout_height="@dimen/fps_navigation_icon_size"
         android:layout_marginLeft="45dp"
         android:src="@mipmap/chart_icon"
         android:visibility="invisible"
@@ -28,8 +28,8 @@
 
     <ImageView
         android:id="@+id/to_jank_stack_tv"
-        android:layout_width="@dimen/fps_size"
-        android:layout_height="@dimen/fps_size"
+        android:layout_width="@dimen/fps_navigation_icon_size"
+        android:layout_height="@dimen/fps_navigation_icon_size"
         android:layout_marginLeft="90dp"
         android:background="@mipmap/fps_a_grade"
         android:visibility="invisible"

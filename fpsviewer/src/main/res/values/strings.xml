@@ -5,4 +5,6 @@
     <string name="menu_all">all</string>
     <string name="occurrence_time">occurrence time %s</string>
     <string name="cost_time">cost:   %sms</string>
+    <string name="average_fps">The average frame rate：</string>
+    <string name="average_frame_skip">frame skip per second during this period</string>
 </resources>

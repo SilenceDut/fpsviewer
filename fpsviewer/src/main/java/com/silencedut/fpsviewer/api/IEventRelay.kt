@@ -12,10 +12,8 @@ interface IEventRelay : ITransfer {
 
     fun addFrameListener(frameListener: FrameListener)
 
-    fun currentFrameIndex():Int
-
     interface FrameListener {
-        fun onFrame(frameIndex: Int,  frameCostMillis: Int)
+        fun onFrame(frameTimeMillis: Long, frameCostMillis: Int)
 
         fun onRecord(recording: Boolean)
     }

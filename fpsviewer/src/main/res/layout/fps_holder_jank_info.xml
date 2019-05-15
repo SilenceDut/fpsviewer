@@ -39,20 +39,23 @@
         android:id="@+id/solve_status"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginRight="2dp"
-        android:src="@mipmap/fps_undone"
-        android:scaleType="centerInside"
-        android:layout_alignParentRight="true"
-    />
-    
-    <ImageView
-        android:id="@+id/more"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:src="@mipmap/fps_jankinfo_more"
+        android:layout_marginRight="10dp"
+        android:src="@mipmap/fps_alarm"
         android:scaleType="centerInside"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
     />
+
+    <ImageView
+        android:id="@+id/jank_delete"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="10dp"
+        android:src="@mipmap/fps_delete"
+        android:scaleType="centerInside"
+        android:layout_alignParentRight="true"
+        android:visibility="gone"
+    />
+
 </RelativeLayout>
 

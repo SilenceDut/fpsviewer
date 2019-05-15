@@ -8,7 +8,7 @@ import com.silencedut.fpsviewer.transfer.ITransfer
  * @date 2019-05-10
  */
 interface INavigator : ITransfer{
-    fun toFpsChatActivity(context: Context,fpsBuffer:IntArray,startFrameIndex : Int)
-    fun toJankDetailsActivity(context: Context ,jankPoint:Int)
+    fun toFpsChatActivity(context: Context)
+    fun toJankDetailsActivity(context: Context, jankId:Long)
     fun toJankInfosActivity(context:Context,period: Boolean = true)
 }

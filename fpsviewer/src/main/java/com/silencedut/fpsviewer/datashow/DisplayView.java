@@ -20,6 +20,7 @@ import com.silencedut.fpsviewer.api.IUtilities;
 import com.silencedut.fpsviewer.transfer.TransferCenter;
 import com.silencedut.fpsviewer.utilities.FpsLog;
 import com.silencedut.hub_annotation.HubInject;
+import org.jetbrains.annotations.NotNull;
 
 import static com.silencedut.fpsviewer.utilities.FpsConstants.*;
 
@@ -29,15 +30,16 @@ import static com.silencedut.fpsviewer.utilities.FpsConstants.*;
  * @date 2019/3/26
  */
 @HubInject(api = IDisplayFps.class)
-public class DisplayView implements IDisplayFps, View.OnClickListener ,View.OnTouchListener, IEventRelay.FrameListener {
+public class DisplayView implements IDisplayFps, View.OnClickListener, View.OnTouchListener, IEventRelay.FrameListener {
 
 
     enum STATE {
         /**
          * 浮窗View状态
          */
-        INITIAL, UPDATE,STOP,ANALYZE
+        INITIAL, UPDATE, STOP, ANALYZE
     }
+
     private static final String TAG = "FpsViewer";
     private static final int MOVE_ERROR = 20;
     private static final int FPS_LEVEL_BAD = 15;
@@ -61,9 +63,8 @@ public class DisplayView implements IDisplayFps, View.OnClickListener ,View.OnTo
 
     private STATE mState = STATE.INITIAL;
 
-    private int[] mFrameCostBuffer = new int[FPS_MAX_COUNT_DEFAULT];
+    private long[] mFrameCostBuffer = new long[FPS_MAX_COUNT_DEFAULT];
 
-    private int mStartFrameIndex;
     private int mCurrentFrameIndex;
 
     private long mStartTime;
@@ -79,9 +80,9 @@ public class DisplayView implements IDisplayFps, View.OnClickListener ,View.OnTo
     @SuppressLint({"InflateParams", "ClickableViewAccessibility"})
     private void initView(final Context context) {
         try {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-                if(!Settings.canDrawOverlays(context)) {
+                if (!Settings.canDrawOverlays(context)) {
                     Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.setData(Uri.parse("package:" + context.getPackageName()));
@@ -89,16 +90,16 @@ public class DisplayView implements IDisplayFps, View.OnClickListener ,View.OnTo
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG,"open fps view fail",e);
+            Log.e(TAG, "open fps view fail", e);
         }
 
         LayoutInflater mLayoutInflater = LayoutInflater.from(context);
         mRootView = mLayoutInflater.inflate(R.layout.fps_layout, null);
-        mFpsTv  = mRootView.findViewById(R.id.fps_tv);
+        mFpsTv = mRootView.findViewById(R.id.fps_tv);
         mChart = mRootView.findViewById(R.id.to_chart_tv);
-        mJankStack =  mRootView.findViewById(R.id.to_jank_stack_tv);
+        mJankStack = mRootView.findViewById(R.id.to_jank_stack_tv);
 
-        mAGradeDrawable =  context.getResources().getDrawable(R.mipmap.fps_a_grade);
+        mAGradeDrawable = context.getResources().getDrawable(R.mipmap.fps_a_grade);
         mDGradeDrawable = context.getResources().getDrawable(R.mipmap.fps_d_grade);
 
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -131,36 +132,58 @@ public class DisplayView implements IDisplayFps, View.OnClickListener ,View.OnTo
 
 
     @Override
-    public void onFrame(int frameIndex, int frameCostMillis) {
-        if(mState == STATE.UPDATE) {
-            int skipped = (int) (frameCostMillis / FRAME_INTERVAL_NANOS - 1);
-            int fps = FPS_MAX_DEFAULT - skipped ;
-            if(fps < 0) {
+    public void onFrame(long frameTimeMillis, int frameCostMillis) {
+        if (mState == STATE.UPDATE) {
+            int skipped = (int) ((frameCostMillis * NANOS_PER_MS - FRAME_INTERVAL_NANOS) / FRAME_INTERVAL_NANOS);
+
+            int fps = FPS_MAX_DEFAULT - skipped;
+            if (fps < 0) {
                 fps = 0;
             }
-            mFpsTv.setText(fps+"");
-            if(fps < FPS_LEVEL_BAD) {
+            mFpsTv.setText(fps + "");
+            if (fps < FPS_LEVEL_BAD) {
                 mFpsTv.setBackgroundDrawable(mDGradeDrawable);
             } else {
                 mFpsTv.setBackgroundDrawable(mAGradeDrawable);
             }
-            recordFrame(frameIndex,frameCostMillis);
-            mCurrentFrameIndex = frameIndex;
+            recordFrame(buildRecord(frameTimeMillis, frameCostMillis));
+
+            mCurrentFrameIndex++;
         }
     }
 
 
+    /**
+     * 2^43 = 8796093022208 format data year-month-day is 2248-09-26
+     * 2^19 = 524288 about 8 minute
+     */
+    @Override
+    public long buildRecord(long frameTimeMillis, int frameCostMillis) {
+
+        return (long) (frameCostMillis & 0x07FFFF) << 44 | frameTimeMillis;
+    }
+
+    @Override
+    public long frameTimeMillis(long record) {
+        return record & 0x0FFFFFFFFFFFL;
+    }
+
+    @Override
+    public int frameCostMillis(long record) {
+        return (int) (record >> 44 & 0x07FFFF);
+    }
+
     @Override
     public void onRecord(boolean recording) {
-        if(recording) {
+        if (recording) {
             mRootView.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             mRootView.setVisibility(View.GONE);
         }
     }
 
     private void startUpdate() {
-        mStartFrameIndex = TransferCenter.getImpl(IEventRelay.class).currentFrameIndex();
+        mCurrentFrameIndex = 0;
         mStartTime = SystemClock.elapsedRealtime();
         mFpsTv.setVisibility(View.VISIBLE);
         mChart.setVisibility(View.GONE);
@@ -173,7 +196,7 @@ public class DisplayView implements IDisplayFps, View.OnClickListener ,View.OnTo
         mJankStack.setVisibility(View.VISIBLE);
         mFpsTv.setText(R.string.go);
         long duration = SystemClock.elapsedRealtime() - mStartTime;
-        FpsLog.info("duration:"+duration);
+        FpsLog.info("duration:" + duration);
     }
 
     @Override
@@ -192,43 +215,38 @@ public class DisplayView implements IDisplayFps, View.OnClickListener ,View.OnTo
         mFpsTv.setText(R.string.go);
     }
 
-    /**
-     * if frameIndex > FPS_MAX_COUNT_DEFAULT ,just crash
-     */
-    private void recordFrame(int frameIndex ,int frameCost) {
-        try {
-            mFrameCostBuffer[frameIndex] = frameCost;
-        }catch (Exception e) {
-            stopUpdate();
+
+    private void recordFrame(long recordData) {
+        if (mCurrentFrameIndex < FPS_MAX_COUNT_DEFAULT) {
+            mFrameCostBuffer[mCurrentFrameIndex] = recordData;
+        } else {
+            mFrameCostBuffer[mCurrentFrameIndex % FPS_MAX_COUNT_DEFAULT] = recordData;
         }
     }
+
 
     @Override
     public void onClick(View v) {
 
-        if(v.getId() == R.id.fps_tv) {
-            if(mState.ordinal() < STATE.ANALYZE.ordinal()) {
+        if (v.getId() == R.id.fps_tv) {
+            if (mState.ordinal() < STATE.ANALYZE.ordinal()) {
 
-                if(mState == STATE.STOP || mState == STATE.INITIAL) {
+                if (mState == STATE.STOP || mState == STATE.INITIAL) {
                     startUpdate();
                     mState = STATE.UPDATE;
-                }else if(mState == STATE.UPDATE) {
+                } else if (mState == STATE.UPDATE) {
                     stopUpdate();
                     mState = STATE.STOP;
                 }
             }
-        } else if(v.getId() == R.id.to_chart_tv && mCurrentFrameIndex < FPS_MAX_COUNT_DEFAULT && mStartFrameIndex < FPS_MAX_COUNT_DEFAULT) {
+        } else if (v.getId() == R.id.to_chart_tv ) {
             mState = STATE.ANALYZE;
             dismiss();
-            int frameLength = mCurrentFrameIndex - mStartFrameIndex ;
-            int[] copyBuffer  = new int[frameLength];
-            System.arraycopy(mFrameCostBuffer,mStartFrameIndex,copyBuffer,0, frameLength);
-            FpsLog.info("buffer length "+copyBuffer.length);
 
-            TransferCenter.getImpl(INavigator.class).toFpsChatActivity(mFpsTv.getContext(),copyBuffer,mStartFrameIndex);
-        }  else if(v.getId() == R.id.to_jank_stack_tv){
+            TransferCenter.getImpl(INavigator.class).toFpsChatActivity(mFpsTv.getContext());
+        } else if (v.getId() == R.id.to_jank_stack_tv) {
             dismiss();
-            TransferCenter.getImpl(INavigator.class).toJankInfosActivity(mJankStack.getContext(),true);
+            TransferCenter.getImpl(INavigator.class).toJankInfosActivity(mJankStack.getContext(), true);
         }
     }
 
@@ -247,8 +265,8 @@ public class DisplayView implements IDisplayFps, View.OnClickListener ,View.OnTo
             case MotionEvent.ACTION_MOVE:
                 float rawX = event.getRawX();
                 float rawY = event.getRawY();
-                mLayoutParams.x +=  rawX - mTouchStartX;
-                mLayoutParams.y +=  rawY - mTouchStartY;
+                mLayoutParams.x += rawX - mTouchStartX;
+                mLayoutParams.y += rawY - mTouchStartY;
                 mTouchStartX = rawX;
                 mTouchStartY = rawY;
                 mWindowManager.updateViewLayout(mRootView, mLayoutParams);
@@ -257,15 +275,47 @@ public class DisplayView implements IDisplayFps, View.OnClickListener ,View.OnTo
                 if (Math.abs(mLayoutParams.x - mStartPositionX) < MOVE_ERROR && Math.abs(mLayoutParams.y
                         - mStartPositionY) < MOVE_ERROR) {
 
-                    FpsLog.info("isFpsView:"+(v.getId() == R.id.fps_tv)+";"+(v.getId() == R.id.to_chart_tv));
+                    FpsLog.info("isFpsView:" + (v.getId() == R.id.fps_tv) + ";" + (v.getId() == R.id.to_chart_tv));
                     v.performClick();
                     return true;
                 }
                 break;
-            default: break;
+            default:
+                break;
         }
         return false;
     }
+
+    @NotNull
+    @Override
+    public long[] recordDatas() {
+
+        int frameLength = Math.min(mCurrentFrameIndex,FPS_MAX_COUNT_DEFAULT);
+
+        long[] copyBuffer = new long[frameLength];
+
+        if(mCurrentFrameIndex > FPS_MAX_COUNT_DEFAULT){
+            System.arraycopy(mFrameCostBuffer, mCurrentFrameIndex, copyBuffer, 0, FPS_MAX_COUNT_DEFAULT-mCurrentFrameIndex);
+            System.arraycopy(mFrameCostBuffer, 0, copyBuffer, FPS_MAX_COUNT_DEFAULT-mCurrentFrameIndex,mCurrentFrameIndex);
+        }else {
+            System.arraycopy(mFrameCostBuffer, 0, copyBuffer, 0, mCurrentFrameIndex);
+        }
+
+        System.arraycopy(mFrameCostBuffer, 0, copyBuffer, 0, mCurrentFrameIndex);
+
+        return copyBuffer;
+    }
+
+    @Override
+    public long periodStartTime() {
+        if(mCurrentFrameIndex > FPS_MAX_COUNT_DEFAULT){
+            return frameTimeMillis(mFrameCostBuffer[mCurrentFrameIndex%FPS_MAX_COUNT_DEFAULT]);
+        }else {
+            return frameTimeMillis(mFrameCostBuffer[0]);
+        }
+
+    }
+
 
 }
 

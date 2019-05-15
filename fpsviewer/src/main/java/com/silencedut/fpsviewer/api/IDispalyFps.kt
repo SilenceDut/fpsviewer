@@ -12,4 +12,14 @@ interface IDisplayFps : ITransfer {
      */
     fun dismiss()
     fun show()
+
+    fun buildRecord(frameTimeMillis: Long, fps: Int): Long
+
+    fun frameTimeMillis(record: Long): Long
+
+    fun frameCostMillis(record: Long): Int
+
+    fun recordDatas():LongArray
+
+    fun periodStartTime() : Long
 }
