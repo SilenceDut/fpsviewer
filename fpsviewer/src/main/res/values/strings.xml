@@ -13,4 +13,7 @@
     <string name="not_prompted" translatable="false">Not prompted again </string>
     <string name="same_stack_number">same stack number of this jank frame</string>
     <string name="stack_info">stacks of this jank frame</string>
+    <string name="jank_infos">Jank List</string>
+    <string name="jank_details">Details</string>
+    <string name="jank_chart" translatable="false">Chart</string>
 </resources>

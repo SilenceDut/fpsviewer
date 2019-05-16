@@ -23,6 +23,15 @@
             android:layout_gravity="center_vertical"
         />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/jank_chart"
+            android:textColor="#fff"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            />
+
         <ImageView
             android:id="@+id/period_jank"
             android:layout_width="20dp"

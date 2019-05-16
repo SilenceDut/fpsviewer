@@ -8,7 +8,7 @@ import com.silencedut.fpsviewer.data.JankInfo
  * @author SilenceDut
  * @date 2019/5/6
  */
-data class JankInfoData(var jankInfo: JankInfo) : BaseMutableData<JankInfoData>() {
+data class JankInfoData(var jankInfo: JankInfo,var showDelete:Boolean = false) : BaseMutableData<JankInfoData>() {
 
     companion object {
         var VIEW_ID = R.layout.fps_holder_jank_info

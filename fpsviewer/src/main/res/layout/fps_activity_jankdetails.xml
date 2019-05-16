@@ -21,6 +21,15 @@
             android:src="@mipmap/fps_finish"
             />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/jank_details"
+            android:textColor="#fff"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            />
+
         <ImageView
             android:id="@+id/resolve_status"
             android:layout_width="@dimen/fps_title_icon_size"
@@ -80,7 +89,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="5dp"

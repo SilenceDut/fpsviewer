@@ -11,4 +11,6 @@
     <string name="not_prompted">不再提示</string>
     <string name="same_stack_number">s相同堆栈数</string>
     <string name="stack_info">堆栈信息</string>
+    <string name="jank_infos">卡顿列表</string>
+    <string name="jank_details">详情</string>
 </resources>

@@ -5,7 +5,6 @@ import android.graphics.Color;
 
 import android.graphics.Typeface;
 
-import android.view.MenuItem;
 import android.view.View;
 
 import com.github.mikephil.charting.animation.Easing;
@@ -45,7 +44,7 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
 
     @Override
     public int provideContentViewId() {
-        return R.layout.fps_analyze;
+        return R.layout.fps_activity_chart;
     }
 
     @Override

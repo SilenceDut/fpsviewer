@@ -15,17 +15,18 @@ import com.silencedut.fpsviewer.transfer.TransferCenter
  * @author SilenceDut
  * @date 2019/5/6
  */
-class JankInfoHolder(itemView: View, diffAdapter: DiffAdapter) : BaseDiffViewHolder<JankInfoData>(itemView,diffAdapter) {
-    private var occurredTimeTv:TextView = itemView.findViewById(R.id.occurTime_Tv)
-    private var costTimeTv:TextView = itemView.findViewById(R.id.costTime_Tv)
-    private var breviaryTv:TextView = itemView.findViewById(R.id.breviary_Tv)
-    private var solveStatus:ImageView = itemView.findViewById(R.id.solve_status)
-    private var delete:ImageView = itemView.findViewById(R.id.jank_delete)
+class JankInfoHolder(itemView: View, diffAdapter: DiffAdapter) :
+    BaseDiffViewHolder<JankInfoData>(itemView, diffAdapter) {
+    private var occurredTimeTv: TextView = itemView.findViewById(R.id.occurTime_Tv)
+    private var costTimeTv: TextView = itemView.findViewById(R.id.costTime_Tv)
+    private var breviaryTv: TextView = itemView.findViewById(R.id.breviary_Tv)
+    private var solveStatus: ImageView = itemView.findViewById(R.id.solve_status)
+    private var delete: ImageView = itemView.findViewById(R.id.jank_delete)
 
     init {
         itemView.setOnClickListener {
             data?.let {
-                TransferCenter.getImpl(INavigator::class.java).toJankDetailsActivity(context,it.jankInfo.occurredTime)
+                TransferCenter.getImpl(INavigator::class.java).toJankDetailsActivity(context, it.jankInfo.occurredTime)
             }
             delete.visibility = View.GONE
         }
@@ -36,30 +37,32 @@ class JankInfoHolder(itemView: View, diffAdapter: DiffAdapter) : BaseDiffViewHol
                 diffAdapter.deleteData(data)
             }
         }
-    }
-
-    override fun updateItem(data: JankInfoData, position: Int) {
-
-        occurredTimeTv.text = context.getString(R.string.occurrence_time,TransferCenter.getImpl(IUtilities::class.java).ms2Date(data.jankInfo.occurredTime))
-        costTimeTv.text = context.getString(R.string.cost_time,data.jankInfo.frameCost.toString())
-
-        if(data.jankInfo.stackWitchCount.isNotEmpty()){
-            breviaryTv.text = data.jankInfo.stackWitchCount[0].first
-        }
-        if(data.jankInfo.resolved){
-            solveStatus.setImageResource(R.mipmap.fps_done)
-        }else {
-            solveStatus.setImageResource(R.mipmap.fps_alarm)
-        }
 
         itemView.setOnLongClickListener {
+            data?.showDelete = true
             delete.visibility = View.VISIBLE
             return@setOnLongClickListener true
         }
     }
 
+    override fun updateItem(data: JankInfoData, position: Int) {
+
+        occurredTimeTv.text = context.getString(R.string.occurrence_time,
+            TransferCenter.getImpl(IUtilities::class.java).ms2Date(data.jankInfo.occurredTime))
+        costTimeTv.text = context.getString(R.string.cost_time, data.jankInfo.frameCost.toString())
+
+        if (data.jankInfo.stackWitchCount.isNotEmpty()) {
+            breviaryTv.text = data.jankInfo.stackWitchCount[0].first
+        }
+        if (data.jankInfo.resolved) {
+            solveStatus.setImageResource(R.mipmap.fps_done)
+        } else {
+            solveStatus.setImageResource(R.mipmap.fps_alarm)
+        }
+        delete.visibility = if (data.showDelete) View.VISIBLE else View.GONE
+    }
+
     override fun getItemViewId(): Int {
         return JankInfoData.VIEW_ID
     }
-
 }
