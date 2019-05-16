@@ -6,4 +6,9 @@
     <string name="cost_time">耗时:   %sms</string>
     <string name="average_fps">平均帧率：</string>
     <string name="average_frame_skip">平均每秒丢帧数</string>
+    <string name="sort_by_occurrence_time">按发生时间排序</string>
+    <string name="sort_by_cost_time">按帧卡顿耗时排序</string>
+    <string name="not_prompted">不再提示</string>
+    <string name="same_stack_number">s相同堆栈数</string>
+    <string name="stack_info">堆栈信息</string>
 </resources>

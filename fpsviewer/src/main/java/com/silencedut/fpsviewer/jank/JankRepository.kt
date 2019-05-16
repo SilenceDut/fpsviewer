@@ -10,6 +10,7 @@ import com.silencedut.fpsviewer.transfer.TransferCenter
 import com.silencedut.fpsviewer.utilities.FpsConstants
 import com.silencedut.fpsviewer.utilities.FpsLog
 import com.silencedut.hub_annotation.HubInject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -53,6 +54,7 @@ class JankRepository : IJankRepository {
     override fun markResolved(jankId: Long) {
         GlobalScope.launch(Dispatchers.IO){
             jankTraceInfosByJankId[jankId]?.let {
+                it.resolved = true
                 jankDao.update(it)
                 resolvedJankLiveData.postValue(jankId)
             }
@@ -90,8 +92,7 @@ class JankRepository : IJankRepository {
     override fun jankInfosAfterTime(startTime: Long, sortByCostTime :Boolean): LiveData<List<JankInfo>> {
 
         return  MutableLiveData<List<JankInfo>>().also {
-
-            TransferCenter.getImpl(IViewer::class.java).fpsConfig().taskExecutor.execute {
+            GlobalScope.launch(Dispatchers.Default){
                 it.postValue(mutableListOf<JankInfo>().also { jankInfoList ->
                     jankTraceInfosByJankId.forEach{
                         if(it.key > startTime) {

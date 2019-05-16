@@ -33,7 +33,7 @@
         android:layout_marginLeft="90dp"
         android:background="@mipmap/fps_a_grade"
         android:visibility="invisible"
-        android:src="@mipmap/jank_icon"
+        android:src="@mipmap/fps_jank_icon"
         android:scaleType="centerInside"
     />
 

@@ -1,9 +1,14 @@
 package com.silencedut.fpsviewer.datashow
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.silencedut.diffadapter.DiffAdapter
+import com.silencedut.diffadapter.rvhelper.RvHelper
 import com.silencedut.diffadapter.utils.UpdateFunction
 import com.silencedut.fpsviewer.R
 import com.silencedut.fpsviewer.api.IDisplayFps
@@ -11,7 +16,9 @@ import com.silencedut.fpsviewer.datashow.adapter.JankInfoData
 import com.silencedut.fpsviewer.datashow.adapter.JankInfoHolder
 import com.silencedut.fpsviewer.jank.IJankRepository
 import com.silencedut.fpsviewer.transfer.TransferCenter
+import com.silencedut.fpsviewer.utilities.FpsConstants
 import kotlinx.android.synthetic.main.fps_jank_activity_stackinfos.*
+import kotlinx.android.synthetic.main.fps_sanckbar_sort.*
 
 /**
  * @author SilenceDut
@@ -20,19 +27,32 @@ import kotlinx.android.synthetic.main.fps_jank_activity_stackinfos.*
 class JankStackInfosActivity : BaseFpsViewerActivity() {
     private var mJanksAdapter: DiffAdapter?=null
     private var currentByCostTime = true
-    private var startTime =0L
+    private var startTime  = TransferCenter.getImpl(IDisplayFps::class.java).periodStartTime()
+    private var sharedPreferences : SharedPreferences? = null
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+
         when (item.itemId) {
             R.id.navigation_period -> {
                 startTime = TransferCenter.getImpl(IDisplayFps::class.java).periodStartTime()
-                return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_all -> {
                 startTime = 0
-                return@OnNavigationItemSelectedListener true
             }
         }
-        false
+        showJankInfos(startTime,currentByCostTime)
+        true
+    }
+
+    private fun showSortToast() {
+
+        val text = if(currentByCostTime) getString(R.string.sort_by_cost_time) else getString(R.string
+            .sort_by_occurrence_time)
+        if(sharedPreferences?.getBoolean(text,true) == true) {
+            Snackbar.make(fps_jankInfos_rootView, text, Snackbar.LENGTH_LONG).setAction(R.string.not_prompted) {
+                sharedPreferences?.edit()?.putBoolean(text,false)?.apply()
+            }.show()
+        }
+
     }
 
     override fun provideContentViewId(): Int {
@@ -40,6 +60,7 @@ class JankStackInfosActivity : BaseFpsViewerActivity() {
     }
 
     override fun initViews() {
+        sharedPreferences = getSharedPreferences(FpsConstants.ShAREDPREFERENCES, Context.MODE_PRIVATE)
         jank_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         mJanksAdapter = DiffAdapter(this)
         mJanksAdapter?.registerHolder(
@@ -50,12 +71,15 @@ class JankStackInfosActivity : BaseFpsViewerActivity() {
         janks_rv.layoutManager = LinearLayoutManager(this)
 
         showJankInfos(startTime,currentByCostTime)
+        showSortToast()
 
         sort?.setOnClickListener {
-            showJankInfos(startTime,!currentByCostTime)
+            currentByCostTime = !currentByCostTime
+            showJankInfos(startTime,currentByCostTime)
+            showSortToast()
         }
 
-        mJanksAdapter?.addUpdateMediator( TransferCenter.getImpl(IJankRepository::class.java).resolvedJankLiveData(),
+        mJanksAdapter?.addUpdateMediator(TransferCenter.getImpl(IJankRepository::class.java).resolvedJankLiveData(),
             object :UpdateFunction<Long, JankInfoData> {
                 override fun providerMatchFeature(input: Long): Long {
                    return input
@@ -73,12 +97,9 @@ class JankStackInfosActivity : BaseFpsViewerActivity() {
             mJanksAdapter?.datas = it?.map { jankInfo->
                 JankInfoData(jankInfo)
             }
+            janks_rv?.postDelayed({
+                janks_rv.scrollToPosition(0)
+            },200)
         })
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        TransferCenter.getImpl(IDisplayFps::class.java).show()
-    }
-
 }

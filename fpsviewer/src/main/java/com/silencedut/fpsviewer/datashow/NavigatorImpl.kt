@@ -31,7 +31,7 @@ class NavigatorImpl : INavigator {
         context.startActivity(intent)
     }
 
-    override fun toJankInfosActivity(context: Context, period: Boolean) {
+    override fun toJankInfosActivity(context: Context) {
         FpsLog.info("JankDetailsActivity navigation")
         val intent = Intent(context, JankStackInfosActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

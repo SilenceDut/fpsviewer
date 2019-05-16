@@ -36,11 +36,6 @@ class JankInfoHolder(itemView: View, diffAdapter: DiffAdapter) : BaseDiffViewHol
                 diffAdapter.deleteData(data)
             }
         }
-
-        itemView.setOnLongClickListener {
-            delete.visibility = View.VISIBLE
-            return@setOnLongClickListener true
-        }
     }
 
     override fun updateItem(data: JankInfoData, position: Int) {
@@ -52,11 +47,15 @@ class JankInfoHolder(itemView: View, diffAdapter: DiffAdapter) : BaseDiffViewHol
             breviaryTv.text = data.jankInfo.stackWitchCount[0].first
         }
         if(data.jankInfo.resolved){
-            solveStatus.setImageResource(R.mipmap.fps_alarm)
-        }else {
             solveStatus.setImageResource(R.mipmap.fps_done)
+        }else {
+            solveStatus.setImageResource(R.mipmap.fps_alarm)
         }
 
+        itemView.setOnLongClickListener {
+            delete.visibility = View.VISIBLE
+            return@setOnLongClickListener true
+        }
     }
 
     override fun getItemViewId(): Int {

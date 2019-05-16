@@ -6,6 +6,8 @@ package com.silencedut.fpsviewer.utilities;
  */
 public class FpsConstants {
 
+
+
      public static final short FPS_MAX_DEFAULT = 60;
      /**
       * at least 10 minute
@@ -16,5 +18,7 @@ public class FpsConstants {
      public static final int MS_PER_SECOND = 1000;
 
      public static final String DATABASE_NAME = "fpsviewer-db";
+
+     public static final String ShAREDPREFERENCES = "fps_shared";
 
 }

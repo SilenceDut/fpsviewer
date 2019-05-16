@@ -10,7 +10,7 @@ buildscript {
         lifecycle_extensions = '1.1.1'
         mpchart = 'v3.1.0'
         kotlin_version = '1.3.21'
-        hub = '2.9.2'
+        hub = '2.9.3'
         diffadapter = '1.5.5'
         roomVersion = '2.1.0-alpha07'
         appcompat = '1.0.2'

@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 
 import android.view.MenuItem;
+import android.view.View;
+
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -39,6 +41,7 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
     private FpsConfig mFpsConfig = TransferCenter.getImpl(IViewer.class).fpsConfig();
     private LineChart mFpsChart;
     private PieChart mPieChart;
+    private View mPeriodJank;
 
     @Override
     public int provideContentViewId() {
@@ -49,19 +52,16 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
     public void initViews() {
         mFpsChart = findViewById(R.id.fps_chart);
         mPieChart = findViewById(R.id.fps_level_pieChart);
+        mPeriodJank = findViewById(R.id.period_jank);
+        mPeriodJank.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TransferCenter.getImpl(INavigator.class).toJankInfosActivity(FpsChartActivity.this);
+            }
+        });
         processData(getIntent());
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
-            default:
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -162,8 +162,8 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
             final LineData lineData = new LineData(dataSet);
 
             mFpsChart.setData(lineData);
-            mFpsChart.setDragEnabled(false);
-            mFpsChart.setDoubleTapToZoomEnabled(false);
+            mFpsChart.setDragEnabled(true);
+            mFpsChart.setDoubleTapToZoomEnabled(true);
             mFpsChart.setTouchEnabled(true);
 
             mFpsChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
@@ -203,7 +203,7 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
             mFpsChart.getAxisRight().setEnabled(false);
             mFpsChart.getLegend().setDrawInside(true);
             mFpsChart.getLegend().setYOffset(20);
-            mFpsChart.getLegend().setTextSize(20);
+            mFpsChart.getLegend().setTextSize(14);
             mFpsChart.getLegend().setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
             mFpsChart.getLegend().setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
             mFpsChart.setExtraOffsets(10, 10, 10, 0);
@@ -227,8 +227,8 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
         mPieChart.setDrawCenterText(true);
         mPieChart.setCenterTextColor(Color.parseColor("#7c4dff"));
         mPieChart.setCenterTextTypeface(Typeface.MONOSPACE);
-        mPieChart.setCenterText("FrameSkip");
-        mPieChart.setCenterTextSize(24);
+        mPieChart.setCenterText(getString(R.string.frame_skip));
+        mPieChart.setCenterTextSize(16);
 
         mPieChart.setDrawHoleEnabled(true);
         mPieChart.setHoleColor(Color.WHITE);
@@ -238,7 +238,6 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
 
         mPieChart.setHoleRadius(40f);
         mPieChart.setTransparentCircleRadius(43f);
-
 
 
         mPieChart.setRotationAngle(0);
@@ -262,28 +261,16 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
 
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter(mPieChart));
-        data.setValueTextSize(16f);
+        data.setValueTextSize(14f);
         data.setValueTextColor(Color.WHITE);
         mPieChart.setData(data);
 
         mPieChart.animateY(1400, Easing.EaseInOutQuad);
 
         Legend l = mPieChart.getLegend();
-        l.setTextSize(16);
-        l.setXEntrySpace(7f);
-
-        // 输入标签样式
-        mPieChart.setEntryLabelColor(Color.RED);
-        mPieChart.setEntryLabelTextSize(14f);
+        l.setTextSize(12);
+        l.setXEntrySpace(5f);
 
     }
-
-
-    @Override
-    protected void onDestroy() {
-        TransferCenter.getImpl(IDisplayFps.class).show();
-        super.onDestroy();
-    }
-
 
 }

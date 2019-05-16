@@ -7,7 +7,6 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.*;
@@ -37,7 +36,7 @@ public class DisplayView implements IDisplayFps, View.OnClickListener, View.OnTo
         /**
          * 浮窗View状态
          */
-        INITIAL, UPDATE, STOP, ANALYZE
+        UPDATE, STOP
     }
 
     private static final String TAG = "FpsViewer";
@@ -61,20 +60,20 @@ public class DisplayView implements IDisplayFps, View.OnClickListener, View.OnTo
     private Drawable mDGradeDrawable;
     private Drawable mAGradeDrawable;
 
-    private STATE mState = STATE.INITIAL;
+    private STATE mState = STATE.UPDATE;
 
     private long[] mFrameCostBuffer = new long[FPS_MAX_COUNT_DEFAULT];
 
     private int mCurrentFrameIndex;
 
-    private long mStartTime;
+    private int stack;
 
 
     @Override
     public void onCreate() {
         TransferCenter.getImpl(IEventRelay.class).addFrameListener(this);
         initView(TransferCenter.getImpl(IUtilities.class).application());
-        show();
+        startUpdate();
     }
 
     @SuppressLint({"InflateParams", "ClickableViewAccessibility"})
@@ -182,37 +181,30 @@ public class DisplayView implements IDisplayFps, View.OnClickListener, View.OnTo
         }
     }
 
-    private void startUpdate() {
+    @Override
+    public void startUpdate() {
         mCurrentFrameIndex = 0;
-        mStartTime = SystemClock.elapsedRealtime();
         mFpsTv.setVisibility(View.VISIBLE);
         mChart.setVisibility(View.GONE);
         mJankStack.setVisibility(View.GONE);
-
+        mState = STATE.UPDATE;
     }
 
     private void stopUpdate() {
+        mFpsTv.setVisibility(View.VISIBLE);
         mChart.setVisibility(View.VISIBLE);
         mJankStack.setVisibility(View.VISIBLE);
         mFpsTv.setText(R.string.go);
-        long duration = SystemClock.elapsedRealtime() - mStartTime;
-        FpsLog.info("duration:" + duration);
+        mState = STATE.STOP;
     }
+
 
     @Override
     public void dismiss() {
+        stopUpdate();
         mFpsTv.setVisibility(View.GONE);
         mChart.setVisibility(View.GONE);
         mJankStack.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void show() {
-        mState = STATE.INITIAL;
-        mFpsTv.setVisibility(View.VISIBLE);
-        mChart.setVisibility(View.GONE);
-        mJankStack.setVisibility(View.GONE);
-        mFpsTv.setText(R.string.go);
     }
 
 
@@ -229,24 +221,17 @@ public class DisplayView implements IDisplayFps, View.OnClickListener, View.OnTo
     public void onClick(View v) {
 
         if (v.getId() == R.id.fps_tv) {
-            if (mState.ordinal() < STATE.ANALYZE.ordinal()) {
-
-                if (mState == STATE.STOP || mState == STATE.INITIAL) {
-                    startUpdate();
-                    mState = STATE.UPDATE;
-                } else if (mState == STATE.UPDATE) {
-                    stopUpdate();
-                    mState = STATE.STOP;
-                }
+            if (mState == STATE.STOP ) {
+                startUpdate();
+            } else if (mState == STATE.UPDATE) {
+                stopUpdate();
             }
         } else if (v.getId() == R.id.to_chart_tv ) {
-            mState = STATE.ANALYZE;
             dismiss();
-
             TransferCenter.getImpl(INavigator.class).toFpsChatActivity(mFpsTv.getContext());
         } else if (v.getId() == R.id.to_jank_stack_tv) {
             dismiss();
-            TransferCenter.getImpl(INavigator.class).toJankInfosActivity(mJankStack.getContext(), true);
+            TransferCenter.getImpl(INavigator.class).toJankInfosActivity(mJankStack.getContext());
         }
     }
 
@@ -308,6 +293,7 @@ public class DisplayView implements IDisplayFps, View.OnClickListener, View.OnTo
 
     @Override
     public long periodStartTime() {
+        FpsLog.info("periodStartTime "+mCurrentFrameIndex+",,"+mFrameCostBuffer[0]);
         if(mCurrentFrameIndex > FPS_MAX_COUNT_DEFAULT){
             return frameTimeMillis(mFrameCostBuffer[mCurrentFrameIndex%FPS_MAX_COUNT_DEFAULT]);
         }else {
@@ -317,5 +303,19 @@ public class DisplayView implements IDisplayFps, View.OnClickListener, View.OnTo
     }
 
 
+    @Override
+    public void buildDisplayStack(boolean push) {
+        FpsLog.info("buildDisplayStack "+push);
+        if(push) {
+            stack++;
+        }else {
+            stack --;
+        }
+        if(stack >= 0) {
+            stopUpdate();
+        }else {
+            dismiss();
+        }
+    }
 }
 

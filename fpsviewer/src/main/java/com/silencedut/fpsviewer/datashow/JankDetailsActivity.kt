@@ -57,7 +57,6 @@ class JankDetailsActivity : BaseFpsViewerActivity() {
             mLastJankId = jankId
             TransferCenter.getImpl(IJankRepository::class.java).jankDetailByPointData(it.getLongExtra(JANK_ID,0))
                 .observe(this, Observer { jankInfo ->
-
                         if(jankInfo?.resolved == true){
                             resolve_status.setImageResource(R.mipmap.fps_done)
                         }else {

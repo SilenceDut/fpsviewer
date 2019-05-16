@@ -7,4 +7,10 @@
     <string name="cost_time">cost:   %sms</string>
     <string name="average_fps">The average frame rate：</string>
     <string name="average_frame_skip">frame skip per second during this period</string>
+    <string name="frame_skip" translatable="false">FrameSkip</string>
+    <string name="sort_by_occurrence_time">sort by occurrence time</string>
+    <string name="sort_by_cost_time">sort by frame cost time</string>
+    <string name="not_prompted" translatable="false">Not prompted again </string>
+    <string name="same_stack_number">same stack number of this jank frame</string>
+    <string name="stack_info">stacks of this jank frame</string>
 </resources>

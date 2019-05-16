@@ -11,7 +11,8 @@ interface IDisplayFps : ITransfer {
      * show or dismiss fps viewer
      */
     fun dismiss()
-    fun show()
+
+    fun startUpdate()
 
     fun buildRecord(frameTimeMillis: Long, fps: Int): Long
 
@@ -22,4 +23,6 @@ interface IDisplayFps : ITransfer {
     fun recordDatas():LongArray
 
     fun periodStartTime() : Long
+
+    fun buildDisplayStack(push: Boolean)
 }

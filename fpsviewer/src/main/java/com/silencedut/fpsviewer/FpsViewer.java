@@ -38,14 +38,9 @@ public class FpsViewer implements IViewer{
         }
         Background.INSTANCE.init(application);
         if(this.mFpsConfig.isFpsViewEnable()) {
-            TransferCenter.getImpl(IUtilities.class).mainHandler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    TransferCenter.getImpl(IDisplayFps.class).show();
-                    MainThreadJankSniper.prepare();
-                    TransferCenter.getImpl(IEventRelay.class).recordFps(true);
-                }
-            },3000);
+            MainThreadJankSniper.prepare();
+            TransferCenter.getImpl(IDisplayFps.class).startUpdate();
+            TransferCenter.getImpl(IEventRelay.class).recordFps(true);
         }
     }
 

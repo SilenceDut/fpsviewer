@@ -50,7 +50,6 @@ public class FpsConfig {
 
     private FpsConfig(Builder builder) {
         this.fpsViewEnable = builder.fpsViewEnable;
-        this.taskExecutor = builder.taskExecutor;
         this.enableOutputFpsData = builder.enableOutputFpsData;
         this.jankThreshold = builder.jankThreshold;
         this.traceSamplePeriod = builder.jankThreshold;
@@ -69,7 +68,6 @@ public class FpsConfig {
          */
         int jankThreshold = 200;
 
-        ExecutorService taskExecutor;
         Builder() {
 
         }
@@ -94,30 +92,9 @@ public class FpsConfig {
             return this;
         }
 
-        public Builder providerExecutor(ExecutorService taskExecutor) {
-            this.taskExecutor = taskExecutor;
-            return this;
-        }
 
         public FpsConfig build() {
-            if(taskExecutor == null) {
-                taskExecutor = new ThreadPoolExecutor(2, 2,
-                        0L, TimeUnit.MILLISECONDS,
-                        new LinkedBlockingQueue<Runnable>(128),new FpsThreadFactory());
-            }
             return new FpsConfig(this);
-        }
-    }
-
-    private static class FpsThreadFactory implements ThreadFactory {
-
-        private final AtomicInteger mCount = new AtomicInteger(1);
-
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread thread = new Thread(r, "FpsThread #" + mCount.getAndIncrement());
-            thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            return thread;
         }
     }
 
