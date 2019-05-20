@@ -10,4 +10,6 @@ import com.silencedut.fpsviewer.transfer.ITransfer
 interface IViewer :ITransfer {
     fun initViewer(application: Application,fpsConfig: FpsConfig? = null)
     fun fpsConfig():FpsConfig
+    fun appendSection(sectionName:String)
+    fun removeSection(sectionName:String)
 }

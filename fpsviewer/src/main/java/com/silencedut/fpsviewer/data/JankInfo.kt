@@ -9,4 +9,4 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "jank_table")
 data class JankInfo(@PrimaryKey val occurredTime: Long, val frameCost: Int,
-                    val stackWitchCount: List<Pair<String, Int>>, var resolved :Boolean = false)
+                    val stackWitchCount: List<Pair<String, Int>>, var section:List<String> = mutableListOf() , var resolved :Boolean = false)

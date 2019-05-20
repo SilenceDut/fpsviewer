@@ -10,6 +10,9 @@ import com.silencedut.fpsviewer.R
 import com.silencedut.fpsviewer.api.IUtilities
 import com.silencedut.fpsviewer.jank.IJankRepository
 import com.silencedut.fpsviewer.transfer.TransferCenter
+import android.R.attr.tag
+import com.silencedut.fpsviewer.datashow.TagLayout
+import com.silencedut.fpsviewer.utilities.FpsLog
 
 /**
  * @author SilenceDut
@@ -22,6 +25,7 @@ class JankInfoHolder(itemView: View, diffAdapter: DiffAdapter) :
     private var breviaryTv: TextView = itemView.findViewById(R.id.breviary_Tv)
     private var solveStatus: ImageView = itemView.findViewById(R.id.solve_status)
     private var delete: ImageView = itemView.findViewById(R.id.jank_delete)
+    private var sectionTagLayout: TagLayout = itemView.findViewById(R.id.jank_section_tags)
 
     init {
         itemView.setOnClickListener {
@@ -60,6 +64,18 @@ class JankInfoHolder(itemView: View, diffAdapter: DiffAdapter) :
             solveStatus.setImageResource(R.mipmap.fps_alarm)
         }
         delete.visibility = if (data.showDelete) View.VISIBLE else View.GONE
+
+        sectionTagLayout.removeAllViews()
+        data.jankInfo.section.forEach {
+            FpsLog.info("tag $it")
+            sectionTagLayout.visibility = View.VISIBLE
+            val tagView = layoutInflater.inflate(R.layout.fps_section_tagview, null, false)
+
+            val tagTextView = tagView.findViewById(R.id.tagTextView) as TextView
+            tagTextView.text = it
+            sectionTagLayout.addView(tagView)
+        }
+
     }
 
     override fun getItemViewId(): Int {

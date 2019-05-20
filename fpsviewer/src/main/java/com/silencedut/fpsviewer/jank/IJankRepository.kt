@@ -13,7 +13,8 @@ interface IJankRepository : ITransfer {
 
     fun jankDetailByPointData(jankId: Long): LiveData<JankInfo?>
 
-    fun storeJankTraceInfo(frameTimeMillis: Long,frameCostMillis: Int, stackCountEntries: List<MutableMap.MutableEntry<String, Int>>)
+    fun storeJankTraceInfo(frameTimeMillis: Long,frameCostMillis: Int,
+                           stackCountEntries: List<MutableMap.MutableEntry<String, Int>>,section:List<String>)
 
     fun jankInfosAfterTime(startTime: Long = 0, sortByCostTime :Boolean = true) :LiveData<List<JankInfo>>
 

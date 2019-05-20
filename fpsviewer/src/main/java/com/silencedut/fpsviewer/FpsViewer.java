@@ -4,6 +4,7 @@ import android.app.Application;
 import androidx.annotation.Nullable;
 import com.silencedut.fpsviewer.api.IDisplayFps;
 import com.silencedut.fpsviewer.api.IEventRelay;
+import com.silencedut.fpsviewer.api.ISniper;
 import com.silencedut.fpsviewer.api.IUtilities;
 import com.silencedut.fpsviewer.background.Background;
 import com.silencedut.fpsviewer.jank.MainThreadJankSniper;
@@ -38,7 +39,7 @@ public class FpsViewer implements IViewer{
         }
         Background.INSTANCE.init(application);
         if(this.mFpsConfig.isFpsViewEnable()) {
-            MainThreadJankSniper.prepare();
+            TransferCenter.getImpl(ISniper.class);
             TransferCenter.getImpl(IDisplayFps.class).startUpdate();
             TransferCenter.getImpl(IEventRelay.class).recordFps(true);
         }
@@ -48,5 +49,15 @@ public class FpsViewer implements IViewer{
     @Override
     public FpsConfig fpsConfig() {
         return mFpsConfig;
+    }
+
+    @Override
+    public void appendSection(@NotNull String sectionName) {
+        TransferCenter.getImpl(ISniper.class).appendSection(sectionName);
+    }
+
+    @Override
+    public void removeSection(@NotNull String sectionName) {
+        TransferCenter.getImpl(ISniper.class).removeSection(sectionName);
     }
 }

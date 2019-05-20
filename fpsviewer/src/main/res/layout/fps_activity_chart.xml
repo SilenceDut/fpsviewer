@@ -11,7 +11,7 @@
         android:id="@+id/finish_layout"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/design_default_color_primary">
+        android:background="@color/fps_color_primary">
 
         <ImageView
             android:id="@+id/finish"

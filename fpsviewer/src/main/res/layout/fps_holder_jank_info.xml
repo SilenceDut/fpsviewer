@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
-    android:padding="10dp"
-    android:background="#fff">
+    android:background="#fff"
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/occurTime_Tv"
@@ -13,49 +13,56 @@
         android:layout_height="wrap_content"
         android:textColor="#000"
         android:textSize="14sp"
-    />
+        />
 
     <TextView
         android:id="@+id/costTime_Tv"
-        android:layout_toRightOf="@+id/occurTime_Tv"
-        android:layout_marginLeft="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/occurTime_Tv"
         android:textColor="#000"
         android:textSize="14sp"
-    />
+        />
 
     <TextView
         android:id="@+id/breviary_Tv"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/occurTime_Tv"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:maxLines="4"
+        android:layout_below="@+id/occurTime_Tv"
+        android:layout_marginTop="10dp"
         android:ellipsize="end"
-    />
+        android:maxLines="4"
+        />
 
     <ImageView
         android:id="@+id/solve_status"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginRight="10dp"
-        android:src="@mipmap/fps_alarm"
-        android:scaleType="centerInside"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-    />
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="10dp"
+        android:scaleType="centerInside"
+        android:src="@mipmap/fps_alarm"
+        />
 
     <ImageView
         android:id="@+id/jank_delete"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginRight="10dp"
-        android:src="@mipmap/fps_delete"
-        android:scaleType="centerInside"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:scaleType="centerInside"
+        android:src="@mipmap/fps_delete"
         android:visibility="gone"
-    />
+        />
 
+    <com.silencedut.fpsviewer.datashow.TagLayout
+        android:id="@+id/jank_section_tags"
+        android:layout_below="@+id/breviary_Tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
 </RelativeLayout>
 

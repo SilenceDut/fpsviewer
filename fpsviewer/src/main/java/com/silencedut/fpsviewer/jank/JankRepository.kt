@@ -2,15 +2,12 @@ package com.silencedut.fpsviewer.jank
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.silencedut.fpsviewer.IViewer
 import com.silencedut.fpsviewer.api.IUtilities
 import com.silencedut.fpsviewer.data.FpsDatabase
 import com.silencedut.fpsviewer.data.JankInfo
 import com.silencedut.fpsviewer.transfer.TransferCenter
-import com.silencedut.fpsviewer.utilities.FpsConstants
 import com.silencedut.fpsviewer.utilities.FpsLog
 import com.silencedut.hub_annotation.HubInject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -66,7 +63,8 @@ class JankRepository : IJankRepository {
     override fun storeJankTraceInfo(
         frameTimeMillis:Long,
         frameCostMillis: Int,
-        stackCountEntries: List<MutableMap.MutableEntry<String, Int>>
+        stackCountEntries: List<MutableMap.MutableEntry<String, Int>>,
+        section:List<String>
     ) {
 
         val jankInfo = JankInfo(
@@ -74,7 +72,8 @@ class JankRepository : IJankRepository {
             frameCostMillis,
             stackCountEntries.map {
                 Pair(it.key, it.value)
-            })
+            },
+            section)
         jankTraceInfosByJankId[frameTimeMillis] = jankInfo
         GlobalScope.launch(Dispatchers.IO) {
             jankDao.insert(jankInfo)

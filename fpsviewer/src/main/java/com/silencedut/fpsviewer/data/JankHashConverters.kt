@@ -24,4 +24,15 @@ class JankHashConverters {
         return gson.toJson(list)
     }
 
+    @TypeConverter
+    fun fromListString(sectionStr: String): List<String> {
+        val listType = object : TypeToken<List<String>>() {}.type
+        return gson.fromJson(sectionStr, listType)
+    }
+
+    @TypeConverter
+    fun fromListSection(list: List<String>): String {
+        return gson.toJson(list)
+    }
+
 }

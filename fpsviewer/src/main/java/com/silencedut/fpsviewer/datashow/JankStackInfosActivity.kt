@@ -19,6 +19,7 @@ import com.silencedut.fpsviewer.transfer.TransferCenter
 import com.silencedut.fpsviewer.utilities.FpsConstants
 import kotlinx.android.synthetic.main.fps_jank_activity_stackinfos.*
 import kotlinx.android.synthetic.main.fps_sanckbar_sort.*
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * @author SilenceDut
@@ -44,7 +45,6 @@ class JankStackInfosActivity : BaseFpsViewerActivity() {
     }
 
     private fun showSortToast() {
-
         val text = if(currentByCostTime) getString(R.string.sort_by_cost_time) else getString(R.string
             .sort_by_occurrence_time)
         if(sharedPreferences?.getBoolean(text,true) == true) {
