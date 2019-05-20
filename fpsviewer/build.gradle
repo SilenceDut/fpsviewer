@@ -50,12 +50,14 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compileOnly "androidx.appcompat:appcompat:$appcompat"
+    implementation "androidx.appcompat:appcompat:$appcompat"
     implementation "com.github.PhilJay:MPAndroidChart:$mpchart"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.github.silencedut:diffadapter:$diffadapter"
     api "com.github.silencedut.hub:hub:$hub"
-    implementation "com.google.android.material:material:$material"
+    implementation ("com.google.android.material:material:$material"){
+        exclude group : "androidx.arch.core"
+    }
     implementation ("androidx.room:room-runtime:$roomVersion") {
         exclude group : "androidx.arch.core"
         exclude group : "androidx.annotation"
