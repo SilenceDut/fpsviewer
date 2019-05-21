@@ -21,4 +21,14 @@ public class FpsViewer implements IViewer{
     public FpsConfig fpsConfig() {
         return null;
     }
+
+    @Override
+    public void appendSection(String sectionName) {
+
+    }
+
+    @Override
+    public void removeSection(String sectionName) {
+
+    }
 }
