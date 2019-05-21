@@ -1,12 +1,14 @@
 package com.silencedut.fpsviewer.datashow
 
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.SharedPreferences
+import android.support.design.widget.BottomNavigationView
+import android.support.design.widget.Snackbar
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.snackbar.Snackbar
+
+
 import com.silencedut.diffadapter.DiffAdapter
 import com.silencedut.diffadapter.rvhelper.RvHelper
 import com.silencedut.diffadapter.utils.UpdateFunction

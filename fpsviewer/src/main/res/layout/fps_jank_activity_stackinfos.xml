@@ -45,14 +45,14 @@
     </FrameLayout>
 
 
-    <androidx.recyclerview.widget.RecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/janks_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/jank_navigation"
         android:layout_below="@+id/finish_layout" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+    <android.support.design.widget.BottomNavigationView
         android:id="@+id/jank_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

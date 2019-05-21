@@ -3,8 +3,6 @@ package com.silencedut.fpsviewer.jank;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.os.Trace;
-import androidx.annotation.WorkerThread;
 
 import com.silencedut.fpsviewer.FpsConfig;
 import com.silencedut.fpsviewer.IViewer;

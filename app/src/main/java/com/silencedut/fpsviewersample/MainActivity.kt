@@ -1,14 +1,16 @@
 package com.silencedut.fpsviewersample
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
+import android.support.design.widget.BottomNavigationView
+import android.support.v7.app.AppCompatActivity
 
 import android.util.Log
 import android.view.Choreographer
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
+
 import com.silencedut.fpsviewer.api.ISniper
 import com.silencedut.fpsviewer.transfer.TransferCenter
 
@@ -70,7 +72,9 @@ class MainActivity : AppCompatActivity() {
     var start = 0L
     fun testToastB() {
         start = System.nanoTime()
-        Choreographer.getInstance().postFrameCallback(callback)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            Choreographer.getInstance().postFrameCallback(callback)
+        }
         val delay = (1 until 3).random()
         Thread.sleep(delay*500L)
         testToastA(true)

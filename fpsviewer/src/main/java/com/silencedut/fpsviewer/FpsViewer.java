@@ -1,13 +1,12 @@
 package com.silencedut.fpsviewer;
 
 import android.app.Application;
-import androidx.annotation.Nullable;
+import android.support.annotation.Nullable;
 import com.silencedut.fpsviewer.api.IDisplayFps;
 import com.silencedut.fpsviewer.api.IEventRelay;
 import com.silencedut.fpsviewer.api.ISniper;
 import com.silencedut.fpsviewer.api.IUtilities;
 import com.silencedut.fpsviewer.background.Background;
-import com.silencedut.fpsviewer.jank.MainThreadJankSniper;
 import com.silencedut.fpsviewer.transfer.TransferCenter;
 import com.silencedut.hub_annotation.HubInject;
 import org.jetbrains.annotations.NotNull;

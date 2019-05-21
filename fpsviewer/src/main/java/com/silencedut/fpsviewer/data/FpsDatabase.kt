@@ -1,10 +1,13 @@
 
 package com.silencedut.fpsviewer.data
 
+import android.arch.persistence.room.Database
+import android.arch.persistence.room.Room
+import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.TypeConverters
 import android.content.Context
-import androidx.room.*
 
-import com.silencedut.fpsviewer.FpsViewer
+
 import com.silencedut.fpsviewer.utilities.FpsConstants.DATABASE_NAME
 
 /**

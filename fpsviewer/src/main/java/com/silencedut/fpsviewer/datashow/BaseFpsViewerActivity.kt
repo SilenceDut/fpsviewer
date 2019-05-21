@@ -1,11 +1,12 @@
 package com.silencedut.fpsviewer.datashow
 
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+
 import com.silencedut.fpsviewer.R
 import com.silencedut.fpsviewer.api.IDisplayFps
-import com.silencedut.fpsviewer.api.IUtilities
+
 import com.silencedut.fpsviewer.transfer.TransferCenter
 import com.silencedut.fpsviewer.utilities.FpsLog
 

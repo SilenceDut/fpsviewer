@@ -1,9 +1,10 @@
 package com.silencedut.fpsviewer.datashow
 
 
+import android.arch.lifecycle.Observer
 import android.content.Intent
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.support.v7.widget.LinearLayoutManager
+
 
 import com.silencedut.diffadapter.DiffAdapter
 import com.silencedut.fpsviewer.utilities.FpsLog

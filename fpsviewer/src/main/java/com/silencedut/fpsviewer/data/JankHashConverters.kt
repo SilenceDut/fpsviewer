@@ -1,6 +1,7 @@
 package com.silencedut.fpsviewer.data
 
-import androidx.room.TypeConverter
+
+import android.arch.persistence.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

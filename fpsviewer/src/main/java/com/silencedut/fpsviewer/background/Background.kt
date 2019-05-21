@@ -1,10 +1,10 @@
 package com.silencedut.fpsviewer.background
 
 import android.app.Activity
-import androidx.appcompat.app.AppCompatActivity
 import android.app.ActivityManager
 import android.app.Application
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import com.silencedut.fpsviewer.utilities.FpsLog
 import java.util.HashSet
 

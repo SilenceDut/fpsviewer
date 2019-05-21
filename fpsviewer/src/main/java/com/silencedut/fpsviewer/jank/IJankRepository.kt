@@ -1,6 +1,6 @@
 package com.silencedut.fpsviewer.jank
 
-import androidx.lifecycle.LiveData
+import android.arch.lifecycle.LiveData
 import com.silencedut.fpsviewer.data.JankInfo
 import com.silencedut.fpsviewer.transfer.ITransfer
 

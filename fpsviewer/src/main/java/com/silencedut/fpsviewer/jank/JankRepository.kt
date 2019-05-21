@@ -1,7 +1,8 @@
 package com.silencedut.fpsviewer.jank
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+
 import com.silencedut.fpsviewer.api.IUtilities
 import com.silencedut.fpsviewer.data.FpsDatabase
 import com.silencedut.fpsviewer.data.JankInfo
