@@ -279,14 +279,14 @@ public class DisplayView implements IDisplayFps, View.OnClickListener, View.OnTo
 
         long[] copyBuffer = new long[frameLength];
 
+        int cycleIndex = mCurrentFrameIndex%FPS_MAX_COUNT_DEFAULT;
+
         if(mCurrentFrameIndex > FPS_MAX_COUNT_DEFAULT){
-            System.arraycopy(mFrameCostBuffer, mCurrentFrameIndex, copyBuffer, 0, FPS_MAX_COUNT_DEFAULT-mCurrentFrameIndex);
-            System.arraycopy(mFrameCostBuffer, 0, copyBuffer, FPS_MAX_COUNT_DEFAULT-mCurrentFrameIndex,mCurrentFrameIndex);
+            System.arraycopy(mFrameCostBuffer, cycleIndex, copyBuffer, 0, FPS_MAX_COUNT_DEFAULT- cycleIndex);
+            System.arraycopy(mFrameCostBuffer, 0, copyBuffer, FPS_MAX_COUNT_DEFAULT-cycleIndex,cycleIndex);
         }else {
             System.arraycopy(mFrameCostBuffer, 0, copyBuffer, 0, mCurrentFrameIndex);
         }
-
-        System.arraycopy(mFrameCostBuffer, 0, copyBuffer, 0, mCurrentFrameIndex);
 
         return copyBuffer;
     }
