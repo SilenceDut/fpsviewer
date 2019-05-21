@@ -16,11 +16,11 @@ import androidx.room.Update
 interface JankDao{
 
     @Query("SELECT * from jank_table ORDER BY occurredTime ASC")
-    suspend fun getAllJankInfos(): List<JankInfo>?
+    fun getAllJankInfos(): List<JankInfo>?
 
     @WorkerThread
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(jankInfo: JankInfo)
+    fun insert(jankInfo: JankInfo)
 
     @Query("DELETE FROM jank_table WHERE occurredTime =:jankId")
     fun delete(jankId : Long)
