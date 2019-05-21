@@ -64,6 +64,7 @@ class JankStackInfosActivity : BaseFpsViewerActivity() {
     override fun initViews() {
         sharedPreferences = getSharedPreferences(FpsConstants.ShAREDPREFERENCES, Context.MODE_PRIVATE)
         jank_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        jank_navigation.itemIconTintList = null
         mJanksAdapter = DiffAdapter(this)
         mJanksAdapter?.registerHolder(
             JankInfoHolder::class.java,
