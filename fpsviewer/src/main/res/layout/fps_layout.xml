@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp">
 
@@ -16,25 +16,25 @@
     />
 
     <ImageView
-        android:id="@+id/to_chart_tv"
-        android:layout_width="@dimen/fps_navigation_icon_size"
-        android:layout_height="@dimen/fps_navigation_icon_size"
-        android:layout_marginLeft="45dp"
-        android:src="@mipmap/chart_icon"
-        android:visibility="invisible"
-        android:background="@mipmap/fps_a_grade"
-        android:scaleType="centerInside"
+            android:id="@+id/to_chart_tv"
+            android:layout_width="@dimen/fps_navigation_icon_size"
+            android:layout_height="@dimen/fps_navigation_icon_size"
+            android:layout_marginLeft="45dp"
+            app:srcCompat="@mipmap/chart_icon"
+            android:visibility="invisible"
+            android:background="@mipmap/fps_a_grade"
+            android:scaleType="centerInside"
     />
 
     <ImageView
-        android:id="@+id/to_jank_stack_tv"
-        android:layout_width="@dimen/fps_navigation_icon_size"
-        android:layout_height="@dimen/fps_navigation_icon_size"
-        android:layout_marginLeft="90dp"
-        android:background="@mipmap/fps_a_grade"
-        android:visibility="invisible"
-        android:src="@mipmap/fps_jank_icon"
-        android:scaleType="centerInside"
+            android:id="@+id/to_jank_stack_tv"
+            android:layout_width="@dimen/fps_navigation_icon_size"
+            android:layout_height="@dimen/fps_navigation_icon_size"
+            android:layout_marginLeft="90dp"
+            android:background="@mipmap/fps_a_grade"
+            android:visibility="invisible"
+            app:srcCompat="@mipmap/fps_jank_icon"
+            android:scaleType="centerInside"
     />
 
 

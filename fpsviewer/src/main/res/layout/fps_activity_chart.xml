@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
+        xmlns:app="http://schemas.android.com/apk/res-auto" android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#f3f3f3">
@@ -18,7 +18,7 @@
             android:layout_width="@dimen/fps_title_icon_size"
             android:layout_height="@dimen/fps_title_icon_size"
             android:layout_marginLeft="10dp"
-            android:src="@mipmap/fps_finish"
+            app:srcCompat="@mipmap/fps_finish"
             android:scaleType="centerInside"
             android:layout_gravity="center_vertical"
         />
@@ -38,7 +38,7 @@
             android:layout_height="20dp"
             android:layout_gravity="center_vertical|right"
             android:scaleType="centerInside"
-            android:src="@mipmap/fps_jank_icon"
+            app:srcCompat="@mipmap/fps_jank_icon"
             android:layout_marginRight="10dp"/>
 
     </FrameLayout>

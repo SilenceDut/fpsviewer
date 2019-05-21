@@ -22,7 +22,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:scaleType="centerInside"
-            android:src="@mipmap/fps_finish"
+            app:srcCompat="@mipmap/fps_finish"
             />
 
         <TextView
@@ -41,7 +41,7 @@
             android:layout_gravity="center_vertical|right"
             android:layout_marginRight="10dp"
             android:scaleType="centerInside"
-            android:src="@mipmap/fps_sort_occourtime" />
+            app:srcCompat="@mipmap/fps_sort_occourtime" />
     </FrameLayout>
 
 

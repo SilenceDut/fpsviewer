@@ -1,6 +1,7 @@
 package com.silencedut.fpsviewer.background
 
 import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.app.ActivityManager
 import android.app.Application
 import android.os.Bundle
@@ -21,7 +22,7 @@ object Background {
 
     fun init(application: Application) {
         val activityCallbacks = object : Application.ActivityLifecycleCallbacks {
-            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
             }
 
             override fun onActivityStarted(activity: Activity?) {
@@ -37,10 +38,10 @@ object Background {
                 }
             }
 
-            override fun onActivityResumed(activity: Activity) {
+            override fun onActivityResumed(activity: Activity?) {
             }
 
-            override fun onActivityPaused(activity: Activity) {
+            override fun onActivityPaused(activity: Activity?) {
             }
 
             override fun onActivityStopped(activity: Activity?) {
@@ -55,10 +56,10 @@ object Background {
                 }
             }
 
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {
+            override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
             }
 
-            override fun onActivityDestroyed(activity: Activity) {
+            override fun onActivityDestroyed(activity: Activity?) {
             }
         }
         application.registerActivityLifecycleCallbacks(activityCallbacks)
@@ -67,10 +68,10 @@ object Background {
     /**
      * 判断应用是否后台运行
      */
-    private fun isBackgroundRunning(activity: Activity?): Boolean {
+    private fun isBackgroundRunning(activity: AppCompatActivity?): Boolean {
         try {
             val processName = activity?.packageName
-            val activityManager = activity?.getSystemService(Activity.ACTIVITY_SERVICE) as? ActivityManager
+            val activityManager = activity?.getSystemService(AppCompatActivity.ACTIVITY_SERVICE) as? ActivityManager
                 ?: return false
 
             val processList = activityManager.runningAppProcesses ?: return false

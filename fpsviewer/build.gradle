@@ -55,9 +55,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.github.silencedut:diffadapter:$diffadapter"
     api "com.github.silencedut.hub:hub:$hub"
-    implementation ("com.google.android.material:material:$material"){
-        exclude group : "androidx.arch.core"
-    }
+    implementation "com.android.support:design:28.0.0"
     implementation ("androidx.room:room-runtime:$roomVersion") {
         exclude group : "androidx.arch.core"
         exclude group : "androidx.annotation"
