@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="fps_common_background">#fcfcfc</color>
-    <color name="fps_color_primary">#3F51B5</color>
+    <color name="fps_color_primary">#03A9F4</color>
 </resources>

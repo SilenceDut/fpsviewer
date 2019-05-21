@@ -58,6 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#fff"
+        app:itemTextColor="@color/fps_tab_item_foreground"
         app:menu="@menu/jank_navigation" />
 
 </RelativeLayout>
