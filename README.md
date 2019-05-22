@@ -3,9 +3,9 @@ A Real-time Fps Tool for Android,
 
 一个能实时显示fps,一段时间的平均帧率，以及帧率范围占比，并能获取卡顿堆栈的可视化工具。侵入性低，通过在异步线程采样获取堆栈，无代码侵入，性能消耗可忽略，对性能监控项的异常数据进行采集和分析，整理输出展示相应的堆栈，从而帮助开发者开发出更高质量的应用。
 
-#### 常见分析、定位卡顿的方案
+## 常见分析、定位卡顿的方案
 
-##### 系统工具
+#### 系统工具
 
 **1. TraceView**
 
@@ -20,7 +20,7 @@ Systrace用来检测android系统各个组件随着时间的运行状态，并�
 
 以上几种系统提供的方案一般只能在比较短的时间进行分析，平常开发过程中也很不方便。
 
-##### 第三方库方案
+#### 第三方库方案
 
 * [Matrix-TraceCanary](https://github.com/Tencent/matrix)
 微信的卡顿检测方案，采用的ASM插桩的方式，支持fps和堆栈获取的定位，但是需要自己根据asm插桩的方法id来自己分析堆栈，定位精确度高，性能消耗小，比较可惜的是目前没有界面展示，对代码有一定的侵入性。如果线上使用可以考虑。
@@ -31,7 +31,7 @@ Systrace用来检测android系统各个组件随着时间的运行状态，并�
 * [fpsviewer](https://github.com/SilenceDut/fpsviewer/)
 利用Choreographer.FrameCallback来监控卡顿和Fps的计算，异步线程进行周期采样，当前的帧耗时超过自定义的阈值时，将帧进行分析保存，不影响正常流程的进行，待需要的时候进行展示，定位。
 
-#### fpsviewer 特点
+## fpsviewer 特点
 
 1. 无损FPS实时显示，一段时间的平均帧率和帧率占比
 利用Choreographer.FrameCallback的`fun doFrame(frameTimeNanos: Long)`方法回调里获取数据计算每帧消耗的时长，实时性高且不需要额外的数据获取无其他性能消耗，开启和关闭fpsviewer对帧率的影响远小于1帧。支持一段时间的平均帧率和帧率占比显示，可用于性能优化前后的对比。
@@ -42,7 +42,7 @@ Systrace用来检测android系统各个组件随着时间的运行状态，并�
 
 
 
-#### 效果图
+## 效果图
 
 **[实时fps]**
 
@@ -65,7 +65,7 @@ Systrace用来检测android系统各个组件随着时间的运行状态，并�
 
 可长按删除或者进入详细堆栈界面标记为已解决，点击可进入详细的堆栈信息界面，**TestSection**就是自定义的TAG。
 
-#### 引入
+## 引入
 
 **Step1.Add it in your root add build.gradle at the end of repositories:**
 
