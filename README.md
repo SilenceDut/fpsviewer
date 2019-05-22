@@ -61,7 +61,7 @@ Systrace用来检测android系统各个组件随着时间的运行状态，并�
 ![image](http://ww1.sinaimg.cn/large/006tNc79gy1g3afze991fj30f02r4jwm.jpg)
 
 首页或者上图点击**bug**图标可展示一段时间的卡顿列表
-![image](http://ww3.sinaimg.cn/large/006tNc79gy1g3afz2y9tjj30f00wiabr.jpg)
+![image](http://ww4.sinaimg.cn/large/006tNc79gy1g3agjlm2mej30f00wign9.jpg)
 
 可长按删除或者进入详细堆栈界面标记为已解决，点击可进入详细的堆栈信息界面，**TestSection**就是自定义的TAG。
 
