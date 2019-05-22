@@ -53,8 +53,8 @@ Systrace用来检测android系统各个组件随着时间的运行状态，并�
 ![image](http://ww4.sinaimg.cn/large/006tNc79gy1g3ag122ujdj30f00wiwfw.jpg)
 
 点击分析图标显示：
-![image](http://ww3.sinaimg.cn/large/006tNc79gy1g3afwnaze6j30f00wiab1.jpg)
 
+![image](http://ww3.sinaimg.cn/large/006tNc79gy1g3afwnaze6j30f00wiab1.jpg)
 
 上图折现里点击具体的卡顿点可查看详细的堆栈信息如下：
 **[详细堆栈图]**
