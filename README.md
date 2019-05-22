@@ -46,22 +46,22 @@ Systrace用来检测android系统各个组件随着时间的运行状态，并�
 
 **[实时fps]**
 
-![image](http://ww2.sinaimg.cn/large/006tNc79gy1g3af70bgwxj30ni0bs74j.jpg)
+![image](http://ww2.sinaimg.cn/large/006tNc79gy1g3ag03fggbj30f007m74c.jpg)
 
 **[功能选择]**
 
-![image](http://ww2.sinaimg.cn/large/006tNc79gy1g3af3eb7oaj30u01t0gn4.jpg)
+![image](http://ww4.sinaimg.cn/large/006tNc79gy1g3ag122ujdj30f00wiwfw.jpg)
 
 点击分析图标显示：
-![image](http://ww3.sinaimg.cn/large/006tNc79gy1g3af8hdxx6j30u01t0dia.jpg)
+![image](http://ww3.sinaimg.cn/large/006tNc79gy1g3afwnaze6j30f00wiab1.jpg)
 
 
 上图折现里点击具体的卡顿点可查看详细的堆栈信息如下：
 **[详细堆栈图]**
-![image](http://ww1.sinaimg.cn/large/006tNc79gy1g3afa2hu2vj30u05i8n8g.jpg)
+![image](http://ww1.sinaimg.cn/large/006tNc79gy1g3afze991fj30f02r4jwm.jpg)
 
 首页或者上图点击**bug**图标可展示一段时间的卡顿列表
-![image](http://ww2.sinaimg.cn/large/006tNc79gy1g3aff24ivfj30u01t042k.jpg)
+![image](http://ww3.sinaimg.cn/large/006tNc79gy1g3afz2y9tjj30f00wiabr.jpg)
 
 可长按删除或者进入详细堆栈界面标记为已解决，点击可进入详细的堆栈信息界面，**TestSection**就是自定义的TAG。
 
@@ -107,12 +107,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
-
-
-
-
-
-
-
-
-
