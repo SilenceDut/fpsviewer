@@ -2,6 +2,7 @@ package com.silencedut.fpsviewer;
 
 import android.app.Application;
 import android.support.annotation.Nullable;
+import android.support.v4.os.TraceCompat;
 import com.silencedut.fpsviewer.api.IDisplayFps;
 import com.silencedut.fpsviewer.api.IEventRelay;
 import com.silencedut.fpsviewer.api.ISniper;

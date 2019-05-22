@@ -10,6 +10,15 @@ import com.silencedut.fpsviewer.transfer.ITransfer
 interface IViewer :ITransfer {
     fun initViewer(application: Application,fpsConfig: FpsConfig? = null)
     fun fpsConfig():FpsConfig
+
+    /**
+     *  like TraceCompat.beginSection();
+     *  对一些卡顿的堆栈进行标记，在UI上展示
+     */
     fun appendSection(sectionName:String)
+
+    /**
+     *  like TraceCompat.endSection();
+     */
     fun removeSection(sectionName:String)
 }

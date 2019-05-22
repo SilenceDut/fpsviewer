@@ -10,9 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Choreographer
 import android.widget.TextView
-
-import com.silencedut.fpsviewer.api.ISniper
-import com.silencedut.fpsviewer.transfer.TransferCenter
+import com.silencedut.fpsviewer.FpsViewer
 
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -37,13 +35,13 @@ class MainActivity : AppCompatActivity() {
 
             R.id.navigation_dashboard -> {
                 message.setText(R.string.title_dashboard)
-                TransferCenter.getImpl(ISniper::class.java).appendSection("TestSection")
+                FpsViewer.getViewer().appendSection("TestSection")
                 testToastB()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_notifications -> {
                 message.setText(R.string.title_notifications)
-                TransferCenter.getImpl(ISniper::class.java).removeSection("TestSection")
+                FpsViewer.getViewer().removeSection("TestSection")
                 return@OnNavigationItemSelectedListener true
             }
         }
