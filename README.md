@@ -88,6 +88,18 @@ dependencies {
 }
 ```
 
+** 初始化，按需添加Section
+
+```java
+
+interface IViewer {
+    fun initViewer(application: Application,fpsConfig: FpsConfig? = null)
+    fun fpsConfig():FpsConfig
+    fun appendSection(sectionName:String)
+    fun removeSection(sectionName:String)
+}
+
+```
 
 ## License
 
