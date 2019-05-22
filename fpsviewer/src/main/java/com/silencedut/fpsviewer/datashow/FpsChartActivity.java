@@ -76,8 +76,6 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
 
         long[] fpsBuffer = TransferCenter.getImpl(IDisplayFps.class).recordDatas();
 
-        FpsLog.info("buffer length " + fpsBuffer.length);
-
         List<Entry> fpsEntries = new ArrayList<>();
 
         int temTotalCost = 0;
@@ -95,10 +93,6 @@ public class FpsChartActivity extends BaseFpsViewerActivity {
             temTotalCost += perFrameCost;
 
             int skipped = (int) ((perFrameCost * NANOS_PER_MS - FRAME_INTERVAL_NANOS) / FRAME_INTERVAL_NANOS);
-
-            if (skipped < 0) {
-                FpsLog.info("perFrameCost " + perFrameCost);
-            }
 
             int fps = Math.max(0, Math.min(FPS_MAX_DEFAULT - skipped, 60));
 

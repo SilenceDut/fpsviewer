@@ -25,33 +25,15 @@ abstract class BaseFpsViewerActivity : AppCompatActivity() {
         initViews()
     }
 
-    override fun onResume() {
-        super.onResume()
-        FpsLog.info("onResume:$this")
-    }
 
     override fun onStart() {
         super.onStart()
-        FpsLog.info("onStart:$this")
         TransferCenter.getImpl(IDisplayFps::class.java).buildDisplayStack(false)
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        FpsLog.info("onRestart:$this")
-
     }
 
     override fun onStop() {
         super.onStop()
-        FpsLog.info("onStart:$this")
         TransferCenter.getImpl(IDisplayFps::class.java).buildDisplayStack(true)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        FpsLog.info("onDestroy:$this")
-
     }
 
     abstract fun provideContentViewId():Int

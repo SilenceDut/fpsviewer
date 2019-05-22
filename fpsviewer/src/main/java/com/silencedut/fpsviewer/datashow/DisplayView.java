@@ -293,7 +293,6 @@ public class DisplayView implements IDisplayFps, View.OnClickListener, View.OnTo
 
     @Override
     public long periodStartTime() {
-        FpsLog.info("periodStartTime "+mCurrentFrameIndex+",,"+mFrameCostBuffer[0]);
         if(mCurrentFrameIndex > FPS_MAX_COUNT_DEFAULT){
             return frameTimeMillis(mFrameCostBuffer[mCurrentFrameIndex%FPS_MAX_COUNT_DEFAULT]);
         }else {

@@ -67,7 +67,6 @@ class JankInfoHolder(itemView: View, diffAdapter: DiffAdapter) :
 
         sectionTagLayout.removeAllViews()
         data.jankInfo.section.forEach {
-            FpsLog.info("tag $it")
             sectionTagLayout.visibility = View.VISIBLE
             val tagView = layoutInflater.inflate(R.layout.fps_section_tagview, null, false)
 

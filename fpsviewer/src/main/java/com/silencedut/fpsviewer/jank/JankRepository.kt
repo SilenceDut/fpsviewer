@@ -30,7 +30,6 @@ class JankRepository : IJankRepository {
             val cachedJanks = jankDao.getAllJankInfos()
             cachedJanks?.let {
                 it.forEach { jankInfo ->
-                    FpsLog.info("cache $jankInfo \n")
                     jankTraceInfosByJankId[jankInfo.occurredTime] = jankInfo
                 }
             }

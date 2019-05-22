@@ -77,7 +77,6 @@ public class MainThreadJankSniper implements ISniper, IEventRelay.FrameListener 
                     for (StackTraceElement[] trace : mTracesInOneFrame) {
                         traceStr = TransferCenter.getImpl(IUtilities.class).traceToString(METHOD_TRACE_SKIP, trace);
                         Integer count = stackCountMap.get(traceStr);
-                        FpsLog.info("\n hashcode:" + traceStr.hashCode() + "\n trace:" + traceStr);
                         if (null != count) {
                             stackCountMap.put(traceStr, count + 1);
                         } else {
