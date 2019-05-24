@@ -1,9 +1,6 @@
 package com.silencedut.fpsviewer;
 
-import android.os.Process;
-
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author SilenceDut
@@ -52,7 +49,7 @@ public class FpsConfig {
         this.fpsViewEnable = builder.fpsViewEnable;
         this.enableOutputFpsData = builder.enableOutputFpsData;
         this.jankThreshold = builder.jankThreshold;
-        this.traceSamplePeriod = builder.jankThreshold;
+        this.traceSamplePeriod = builder.traceSamplePeriod;
     }
 
 

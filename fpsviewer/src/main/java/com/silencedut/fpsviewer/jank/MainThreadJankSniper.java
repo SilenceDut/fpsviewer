@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 
+import android.support.v4.os.TraceCompat;
 import com.silencedut.fpsviewer.FpsConfig;
 import com.silencedut.fpsviewer.IViewer;
 import com.silencedut.fpsviewer.api.IEventRelay;

@@ -2,12 +2,12 @@ package com.silencedut.fpsviewer
 
 import android.annotation.TargetApi
 import android.os.Build
+import android.support.v4.os.TraceCompat
 import android.view.Choreographer
 import com.silencedut.fpsviewer.api.IEventRelay
 import com.silencedut.fpsviewer.background.Background
 import com.silencedut.fpsviewer.background.BackgroundCallback
 import com.silencedut.fpsviewer.utilities.FpsConstants
-import com.silencedut.fpsviewer.utilities.FpsLog
 import com.silencedut.hub_annotation.HubInject
 import java.util.ArrayList
 

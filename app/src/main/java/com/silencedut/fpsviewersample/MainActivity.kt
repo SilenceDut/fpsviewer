@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.os.HandlerCompat
 import android.support.v7.app.AppCompatActivity
 
 import android.util.Log
@@ -14,6 +15,7 @@ import com.silencedut.fpsviewer.FpsViewer
 
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -62,9 +64,27 @@ class MainActivity : AppCompatActivity() {
         Thread.sleep(200)
         Log.d(TAG,"afterThread")
         if(isFirst) {
-            testToastA(false)
+            //testToastA(false)
         }
+        GlobalScope.launch(Dispatchers.Default) {
+            Log.d(TAG,"GlobalScope before ${Thread.currentThread()}")
+            val res = testIo()
+            Log.d(TAG,"GlobalScope launch ${Thread.currentThread()} , $res")
+        }
+        Log.d(TAG,"GlobalScope after  ${Thread.currentThread()}")
+    }
 
+
+    suspend fun testIo() : String{
+
+        Log.d(TAG,"GlobalScope ${Thread.currentThread()}")
+        val res =  withContext(Dispatchers.IO) {
+            Log.d(TAG,"GlobalScope withContext ${Thread.currentThread()}")
+            Thread.sleep(5000)
+            return@withContext "hhh"
+        }
+        Log.d(TAG,"GlobalScope $res ${Thread.currentThread()}")
+        return res
     }
 
     var start = 0L
