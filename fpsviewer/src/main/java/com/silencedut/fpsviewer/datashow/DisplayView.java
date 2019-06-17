@@ -135,10 +135,8 @@ public class DisplayView implements IDisplayFps, View.OnClickListener, View.OnTo
         if (mState == STATE.UPDATE) {
             int skipped = (int) ((frameCostMillis * NANOS_PER_MS - FRAME_INTERVAL_NANOS) / FRAME_INTERVAL_NANOS);
 
-            int fps = FPS_MAX_DEFAULT - skipped;
-            if (fps < 0) {
-                fps = 0;
-            }
+            int fps = Math.min(Math.max(FPS_MAX_DEFAULT - skipped,0),FPS_MAX_DEFAULT);
+
             mFpsTv.setText(fps + "");
             if (fps < FPS_LEVEL_BAD) {
                 mFpsTv.setBackgroundDrawable(mDGradeDrawable);

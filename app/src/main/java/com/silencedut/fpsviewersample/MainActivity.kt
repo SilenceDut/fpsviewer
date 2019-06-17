@@ -17,15 +17,24 @@ import com.silencedut.fpsviewer.FpsViewer
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.util.*
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.concurrent.locks.AbstractQueuedSynchronizer
+import android.view.Display
+
+
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "MainActivity"
     }
+
     private var mLastFrameNanos = 0L
 
-    private var asyncHandler: Handler?=null
+    private var asyncHandler: Handler? = null
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
@@ -62,29 +71,85 @@ class MainActivity : AppCompatActivity() {
         trueId = trueId or (1L shl 63)
         Log.d(TAG, "exception on random${(trueId)}+${(trueId shr 63) and 0x1} , ${(1L shl 62)}")
         Thread.sleep(200)
-        Log.d(TAG,"afterThread")
-        if(isFirst) {
-            //testToastA(false)
+        Log.d(TAG, "afterThread")
+        if (isFirst) {
+            // testToastA(false)
         }
-        GlobalScope.launch(Dispatchers.Default) {
-            Log.d(TAG,"GlobalScope before ${Thread.currentThread()}")
-            val res = testIo()
-            Log.d(TAG,"GlobalScope launch ${Thread.currentThread()} , $res")
+        GlobalScope.launch(Dispatchers.Main) {
+            Log.d(TAG, "GlobalScope before ${Thread.currentThread()}")
+
+            Log.d(TAG, "GlobalScope testIo  ${Thread.currentThread()}")
+
+
+//            withContext(Dispatchers.IO) {
+//                suspendCancellableCoroutine<String> { cancellableContinuation ->
+//                    cancellableContinuation.resume("hah")
+//                }
+//                Log.d(TAG,"GlobalScope withContext ${Thread.currentThread()}")
+//                //  Thread.sleep(5000)
+//                //  Log.d(TAG,"GlobalScope withContext thread after ${Thread.currentThread()}")
+//                delay(5000)
+//                Log.d(TAG,"GlobalScope withContext delay after ${Thread.currentThread()}")
+//            }
+//            val res1 =async(Dispatchers.Default){
+//
+//                Log.d(TAG,"GlobalScope withContext ${Thread.currentThread()}")
+//                //  Thread.sleep(5000)
+//                //  Log.d(TAG,"GlobalScope withContext thread after ${Thread.currentThread()}")
+//                delay(5000)
+//                Log.d(TAG,"GlobalScope withContext delay after ${Thread.currentThread()}")
+//            }
+//
+//            val res2 =async(Dispatchers.Default){
+//
+//                Log.d(TAG,"GlobalScope withContext ${Thread.currentThread()}")
+//                //  Thread.sleep(5000)
+//                //  Log.d(TAG,"GlobalScope withContext thread after ${Thread.currentThread()}")
+//                delay(5000)
+//                Log.d(TAG,"GlobalScope withContext delay after ${Thread.currentThread()}")
+//            }
+//            res1.await()
+//            res2.await()
+            val res = testIo2()
+            Log.d(TAG, "GlobalScope res  $res ,${Thread.currentThread()}")
+
+
+            // Log.d(TAG,"GlobalScope delay $res after ${Thread.currentThread()}")
+            //val res2 = testIo2()
+
         }
-        Log.d(TAG,"GlobalScope after  ${Thread.currentThread()}")
+
+        Log.d(TAG, "GlobalScope after  ${Thread.currentThread()}")
+        Thread.sleep(10)
+        Log.d(TAG, "GlobalScope after sleep ${Thread.currentThread()}")
+    }
+
+    suspend fun testIo2() = suspendCancellableCoroutine<String> { continuation ->
+        Thread {
+            Log.d(TAG, "GlobalScope testIo2 ${Thread.currentThread()}")
+            Thread.sleep(5000)
+            continuation.resume("HaHa")
+        }.start()
+
+    }
+
+    suspend fun test() = suspendCancellableCoroutine<String> { cancellableContinuation ->
+        cancellableContinuation.resume("hah")
     }
 
 
-    suspend fun testIo() : String{
+    suspend fun testIo(): String {
+        Log.d(TAG, "GlobalScope testIo  ${Thread.currentThread()}")
 
-        Log.d(TAG,"GlobalScope ${Thread.currentThread()}")
-        val res =  withContext(Dispatchers.IO) {
-            Log.d(TAG,"GlobalScope withContext ${Thread.currentThread()}")
-            Thread.sleep(5000)
-            return@withContext "hhh"
+        withContext(Dispatchers.IO) {
+            Log.d(TAG, "GlobalScope withContext ${Thread.currentThread()}")
+            //  Thread.sleep(5000)
+            //  Log.d(TAG,"GlobalScope withContext thread after ${Thread.currentThread()}")
+            delay(5000)
+            Log.d(TAG, "GlobalScope withContext delay after ${Thread.currentThread()}")
         }
-        Log.d(TAG,"GlobalScope $res ${Thread.currentThread()}")
-        return res
+        Log.d(TAG, "GlobalScope res  ${Thread.currentThread()}")
+        return "aaa"
     }
 
     var start = 0L
@@ -93,10 +158,10 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             Choreographer.getInstance().postFrameCallback(callback)
         }
-        val delay = (1 until 3).random()
-        Thread.sleep(delay*500L)
+        val delay = (3 until 5).random()
+        Thread.sleep(delay * 500L)
         testToastA(true)
-        Log.d(TAG, "delay $delay ${start}")
+        Log.d(TAG, "delay  ${start}")
     }
 
 
@@ -110,12 +175,12 @@ class MainActivity : AppCompatActivity() {
         //                    Log.d(TAG, "currentTimeNano $frameTimeNanos"+"diffLast ${frameTimeNanos - mLastFrameNanos}")
         //                }
         fpsView?.let {
-            doCalculateFrame(frameTimeNanos,it)
+            doCalculateFrame(frameTimeNanos, it)
         }
 
     }
 
-    var fpsView :TextView?=null
+    var fpsView: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,14 +190,15 @@ class MainActivity : AppCompatActivity() {
 
 
         fpsView = findViewById(R.id.message)
-
-
+        val display = windowManager.defaultDisplay
+        val refreshRate = display.refreshRate
+        Log.d(TAG, "refreshRate  ${refreshRate}")
     }
 
 
-
     val mFrameIntervalNanos = 1000000000f / 60
-    private fun doCalculateFrame(frameTimeNanos: Long,fpsView:TextView) {
+    var lastCurrent =0L
+    private fun doCalculateFrame(frameTimeNanos: Long, fpsView: TextView) {
 
         val diff = frameTimeNanos - mLastFrameNanos
 
@@ -142,27 +208,27 @@ class MainActivity : AppCompatActivity() {
         val differ = now - frameTimeNanos
 
 
+        val skipped = (diff - mFrameIntervalNanos) / mFrameIntervalNanos
+//
+//        Log.d(TAG, "current $now" + "frameTimeNanos $frameTimeNanos differ ${now -lastCurrent}")
+//        Log.d(TAG, "fps ${60 - skipped}" + "diff ${ frameTimeNanos - mLastFrameNanos}  ")
 
-        val skipped = (diff - mFrameIntervalNanos)/ mFrameIntervalNanos
-
-        Log.d(TAG, "current $now"+"frameTimeNanos $frameTimeNanos differ $differ")
-        Log.d(TAG, "fps ${60-skipped}"+"diff $diff differ${(frameTimeNanos -start)/mFrameIntervalNanos} ")
-
-        fpsView.text = (60-skipped).toString()
+        fpsView.text = (60 - skipped).toString()
 
         mLastFrameNanos = frameTimeNanos
+        lastCurrent = now
 //        val delay = (1 until 3).random()
 //        Thread.sleep(delay*1000L)
-//        Choreographer.getInstance().postFrameCallback(callback)
+        Choreographer.getInstance().postFrameCallback(callback)
 
     }
 
 
-    private fun IntRange.random() : Int {
+    private fun IntRange.random(): Int {
         try {
-            return Random().nextInt((endInclusive + 1) - start) +  start
-        }catch (e : Exception) {
-            Log.d(TAG,"exception on random",e)
+            return Random().nextInt((endInclusive + 1) - start) + start
+        } catch (e: Exception) {
+            Log.d(TAG, "exception on random", e)
         }
         return 0
     }

@@ -30,10 +30,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-//    debugImplementation project(':fpsviewer')
-//    releaseImplementation project(':fpsviewer-no-op')
-    debugImplementation "com.github.silencedut.fpsviewer:fpsviewer:0.7.4"
-    releaseImplementation "com.github.silencedut.fpsviewer:fpsviewer-no-op:0.7.4"
+    debugImplementation project(':fpsviewer')
+    releaseImplementation project(':fpsviewer-no-op')
+//    debugImplementation "com.github.silencedut.fpsviewer:fpsviewer:0.7.4"
+//    releaseImplementation "com.github.silencedut.fpsviewer:fpsviewer-no-op:0.7.4"
 
     implementation "com.android.support:appcompat-v7:$_supportVersion"
 
