@@ -20,6 +20,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * 获取卡顿时主线程的堆栈
+ *
  * @author SilenceDut
  * @date 2019/4/11
  */
@@ -28,7 +29,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class MainThreadJankSniper implements ISniper, IEventRelay.FrameListener {
     private static final int METHOD_TRACE_SKIP = 2;
     private Handler mSampleHandler;
-    private List<StackTraceElement[]> mTracesInOneFrame= new ArrayList<>();
+    private List<StackTraceElement[]> mTracesInOneFrame = new ArrayList<>();
     private boolean mIsRecording;
     private IJankRepository mJankRepository = TransferCenter.getImpl(IJankRepository.class);
     private FpsConfig mFpsConfig = TransferCenter.getImpl(IViewer.class).fpsConfig();
@@ -38,10 +39,13 @@ public class MainThreadJankSniper implements ISniper, IEventRelay.FrameListener 
         @Override
         public void run() {
 
+
             Thread mainThread = Looper.getMainLooper().getThread();
             StackTraceElement[] stackArray = mainThread.getStackTrace();
+            String trace = TransferCenter.getImpl(IUtilities.class).traceToString(METHOD_TRACE_SKIP, stackArray);
+            FpsLog.info("ISniper sample once "+trace+",size:"+mTracesInOneFrame.size());
             mTracesInOneFrame.add(stackArray);
-            mSampleHandler.postDelayed(this,mFpsConfig.getTraceSamplePeriod());
+            mSampleHandler.postDelayed(this, mFpsConfig.getTraceSamplePeriod());
         }
     };
 
@@ -56,10 +60,10 @@ public class MainThreadJankSniper implements ISniper, IEventRelay.FrameListener 
 
     @Override
     public void onFrame(long frameTimeMillis, int frameCostMillis) {
-        if(this.mIsRecording) {
+        if (this.mIsRecording) {
             mSampleHandler.removeCallbacks(mSampleTask);
-            dealPreFrameTraceInfo(frameTimeMillis,frameCostMillis);
-            mSampleHandler.postDelayed(mSampleTask,mFpsConfig.getTraceSamplePeriod());
+            dealPreFrameTraceInfo(frameTimeMillis, frameCostMillis);
+            mSampleHandler.postDelayed(mSampleTask, mFpsConfig.getTraceSamplePeriod());
         }
     }
 
@@ -68,8 +72,8 @@ public class MainThreadJankSniper implements ISniper, IEventRelay.FrameListener 
         this.mIsRecording = recording;
     }
 
-    private void dealPreFrameTraceInfo(final long frameTimeMillis,final int frameCostMillis) {
-        if(frameCostMillis > mFpsConfig.getJankThreshold() && mTracesInOneFrame.size()>0) {
+    private void dealPreFrameTraceInfo(final long frameTimeMillis, final int frameCostMillis) {
+        if (frameCostMillis > mFpsConfig.getJankThreshold() && mTracesInOneFrame.size() > 0) {
             mSampleHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -77,6 +81,7 @@ public class MainThreadJankSniper implements ISniper, IEventRelay.FrameListener 
                     String traceStr;
                     for (StackTraceElement[] trace : mTracesInOneFrame) {
                         traceStr = TransferCenter.getImpl(IUtilities.class).traceToString(METHOD_TRACE_SKIP, trace);
+                        FpsLog.info("ISniper dealPreFrameTraceInfo traceStr");
                         Integer count = stackCountMap.get(traceStr);
                         if (null != count) {
                             stackCountMap.put(traceStr, count + 1);
@@ -92,7 +97,7 @@ public class MainThreadJankSniper implements ISniper, IEventRelay.FrameListener 
                             return arg1.getValue().compareTo(arg0.getValue());
                         }
                     });
-                    mJankRepository.storeJankTraceInfo(frameTimeMillis, frameCostMillis, stackCountEntries,new ArrayList<>(mSections));
+                    mJankRepository.storeJankTraceInfo(frameTimeMillis, frameCostMillis, stackCountEntries, new ArrayList<>(mSections));
                     mTracesInOneFrame.clear();
                 }
             });
