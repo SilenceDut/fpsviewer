@@ -107,7 +107,7 @@ public class DisplayView implements IDisplayFps, View.OnClickListener, View.OnTo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
-            mLayoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+            mLayoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
 
         mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
